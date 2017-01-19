@@ -85,10 +85,10 @@ node(&apos;cas-agent&apos;) {
     host_ip = common.get_server_ip()
 
     // Deploy OpenStack
-    //osa.deploy_openstack(from_release)
+    osa.deploy_openstack(from_release)
 
     // Install latest version of Tempest in the host
-    //osa.configure_tempest()
+    osa.configure_tempest()
 
 }
 
