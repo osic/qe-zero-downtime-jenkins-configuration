@@ -1,0 +1,270 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<flow-definition plugin="workflow-job@2.9">
+  <actions/>
+  <description>Job used for testing a debugging the pipeline</description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.ChoiceParameterDefinition>
+          <name>from_release</name>
+          <description>Parameter used to specify what OpenStack release will be installed as starting point.</description>
+          <choices class="java.util.Arrays$ArrayList">
+            <a class="string-array">
+              <string>liberty</string>
+              <string>stable/mitaka</string>
+              <string>stable/newton</string>
+              <string>master</string>
+            </a>
+          </choices>
+        </hudson.model.ChoiceParameterDefinition>
+        <hudson.model.ChoiceParameterDefinition>
+          <name>to_release</name>
+          <description>Parameter used to specify what OpenStack release to upgrade to.</description>
+          <choices class="java.util.Arrays$ArrayList">
+            <a class="string-array">
+              <string>stable/mitaka</string>
+              <string>stable/newton</string>
+              <string>master</string>
+            </a>
+          </choices>
+        </hudson.model.ChoiceParameterDefinition>
+        <hudson.model.ChoiceParameterDefinition>
+          <name>datacenter</name>
+          <description></description>
+          <choices class="java.util.Arrays$ArrayList">
+            <a class="string-array">
+              <string>dfw</string>
+              <string>iad</string>
+            </a>
+          </choices>
+        </hudson.model.ChoiceParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
+    <org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+      <triggers/>
+    </org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+  </properties>
+  <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@2.23">
+    <script>#!/usr/bin/env groovy
+
+def osa, common
+String workspace_dir 
+String onmetal_ip, elasticsearch_ip, elasticsearch_pkey
+
+// Jenkins must provide these two variables as parameters or the build 
+// will fail:
+//  - from_release
+//  - to_release
+//  - datacenter [&apos;dfw&apos; | &apos;iad&apos;]
+
+
+// *******************************
+stage &apos;Pre-Deployment&apos;
+// *******************************
+
+echo &apos;Provisioning an onMetal server and preparing it to run OSA&apos;
+node(&apos;master&apos;) {
+    
+    // Copy the Rax key from the Jenkins master
+    dir(&apos;/home/ubuntu&apos;) {
+        stash includes: &apos;.raxpub&apos;, name: &apos;raxpub&apos;
+    }
+
+    // Load the external functions using master since the git command
+    // might not be available at the agent yet
+    fileLoader.withGit(&apos;https://github.com/osic/qa-jenkins-onmetal.git&apos;, &apos;master&apos;, null, &apos;&apos;) {
+        common = fileLoader.load(&apos;jenkins/common.groovy&apos;);
+        osa = fileLoader.load(&apos;jenkins/osa_onmetal.functions.groovy&apos;);
+    }
+    
+}
+
+node(&apos;elasticsearch&apos;) {
+
+    // Get the server information
+    elasticsearch_ip = common.get_server_ip()
+    elasticsearch_pkey = common.get_server_public_key()
+
+}
+
+node(&apos;onmetal-provisioner&apos;) {
+
+    // Wait for the agent to finish running cloud-init
+    common.wait_for_agent_setup()
+
+    // Get the workspace directory in the agent
+    workspace_dir = pwd()
+    echo &quot;The workspace directory is ${workspace_dir}&quot;
+
+    // Get the agent IP
+    String provisioner_ip = common.get_server_ip()
+    echo &quot;The IP address of the OnMetal Provisioner is ${provisioner_ip}&quot;
+
+    // Download the project repository and paste the Rax key
+    git &apos;https://github.com/osic/qa-jenkins-onmetal.git&apos;
+    unstash &apos;raxpub&apos;
+    
+    // Provision the onMetal host
+    onmetal_ip = osa.onmetal_provision(datacenter)
+
+    // Provision the VMs in the onMetal host
+    osa.vm_provision()
+
+    // Prepare the VMs to run OpenStack
+    osa.vm_preparation_for_osa(from_release)
+
+    // Add the elasticsearch public key to the deployed onmetal host
+    common.add_key_to_server(onmetal_ip, elasticsearch_pkey)
+
+}
+
+
+// *******************************
+stage &apos;Deployment&apos;
+// *******************************
+
+echo &apos;Deploying OpenStack using OSA&apos;
+node(&apos;onmetal-provisioner&apos;) {
+
+    // Deploy OpenStack with OSA
+    osa.deploy_openstack()
+    
+    // Install and configure Tempest on the onMetal host
+    osa.configure_tempest()  
+ 
+}
+
+
+// *******************************
+stage &apos;Post-Deployment Validation&apos;
+// *******************************
+
+echo &apos;Validating the OpenStack deployment&apos;
+node(&apos;onmetal-provisioner&apos;) {
+
+    // Run the tempest tests
+    //osa.run_tempest_smoke_tests(&apos;before_upgrade&apos;, elasticsearch_ip)
+
+    // Install and run the persistent resources creation
+    //osa.install_persistent_resources_tests()
+    //osa.run_persistent_resources_tests(&apos;create&apos;)
+    //osa.run_persistent_resources_tests(&apos;verify&apos;, &apos;before_upgrade&apos;)
+
+}
+
+
+// *******************************
+stage &apos;Upgrade Testing Start&apos;
+// *******************************
+echo &apos;Starting tests that will run continuosly thru upgrade&apos;
+node(&apos;onmetal-provisioner&apos;) {
+    
+    //Setup during upgrade test
+    //osa.install_during_upgrade_tests()
+    
+    // Setup API uptime tests
+    //osa.install_api_uptime_tests()
+
+    //Start During Upgrade Test
+    //osa.start_during_test()
+  
+    // Start API uptime tests
+    //osa.start_api_uptime_tests()
+
+}
+
+
+// *******************************
+stage &apos;Upgrade&apos;
+// *******************************
+
+echo &quot;Upgrading the OpenStack deployment from ${from_release} to ${to_release}&quot;
+node(&apos;onmetal-provisioner&apos;) {
+    
+    //Running upgrade
+    //osa.upgrade_openstack(to_release)
+    echo &apos;Fake upgrade starting...&apos;
+    sleep time: 1, unit: &apos;MINUTES&apos;
+    echo &apos;Fake upgrade finished.&apos;
+    
+}
+
+
+// *******************************
+stage &apos;Upgrade Testing Stop&apos;
+// *******************************
+echo &apos;Starting tests that will run continuosly thru upgrade&apos;
+node(&apos;onmetal-provisioner&apos;) {
+
+    //Stop During Upgrade Test
+    //osa.stop_during_test()  
+
+    // Stop API uptime tests
+    //osa.stop_api_uptime_tests()  
+
+}
+
+
+// *******************************
+stage &apos;Post-Upgrade Validation&apos;
+// *******************************
+
+echo &apos;Validating the OpenStack deployment after the upgrade&apos;
+node(&apos;onmetal-provisioner&apos;) {
+ 
+    // Run the tempest tests
+    //osa.run_tempest_smoke_tests(&apos;after_upgrade&apos;, elasticsearch_ip)
+
+    // Run the persistent resources validation then clean them up
+    //osa.run_persistent_resources_tests(&apos;verify&apos;, &apos;after_upgrade&apos;)
+    //osa.run_persistent_resources_tests(&apos;cleanup&apos;)    
+
+}
+
+
+// *******************************
+stage &apos;Reporting&apos;
+// *******************************
+
+echo &apos;Parsing the test results and submitting them to ElasticSearch&apos;
+node(&apos;onmetal-provisioner&apos;){
+    
+    // Pase persistent resource results
+    //osa.setup_parse_persistent_resources()
+    //osa.parse_persistent_resources_tests()
+
+}
+
+node(&apos;elasticsearch&apos;){
+    
+    // Install/upgrade the parser in ElasticSearch
+    //osa.install_parser()
+
+    //Pull data from onmetal places it on ES vm
+    //osa.aggregate_results(onmetal_ip)
+
+    //Push data to ES
+    //osa.parse_results()
+    
+}
+
+
+// *******************************
+stage &apos;Clean Up&apos;
+// *******************************
+
+echo &apos;Deleting the onMetal host and its VMs&apos;
+node(&apos;onmetal-provisioner&apos;) {
+
+    // Delete VMs
+    //osa.delete_virtual_resources()
+    
+    // Delete the onMetal host
+    //osa.delete_onmetal(datacenter)
+
+}</script>
+    <sandbox>true</sandbox>
+  </definition>
+  <triggers/>
+</flow-definition>

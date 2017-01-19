@@ -1,0 +1,46 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description>testing connection to bme cloud5</description>
+  <keepDependencies>false</keepDependencies>
+  <properties/>
+  <scm class="hudson.scm.NullSCM"/>
+  <assignedNode>bme-jenkins-slave-n01</assignedNode>
+  <canRoam>false</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers/>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <hudson.tasks.Shell>
+      <command>f5fpc --start --host https://72.32.87.87 --user ${CLOUD_USER} --password ${CLOUD_PASS} --nocheck &amp;
+#sleep 10
+#f5fpc --info
+sleep 10 
+#f5fpc --info
+ssh 172.24.0.21 -l root &quot;hostname&quot;
+f5fpc --stop &amp;
+sleep 10
+f5fpc --info &amp;</command>
+    </hudson.tasks.Shell>
+  </builders>
+  <publishers/>
+  <buildWrappers>
+    <com.cloudbees.jenkins.plugins.sshagent.SSHAgentBuildWrapper plugin="ssh-agent@1.13">
+      <credentialIds>
+        <string>0eddff59-5efd-4de9-a777-346c1f6d27a7</string>
+      </credentialIds>
+      <ignoreMissing>false</ignoreMissing>
+    </com.cloudbees.jenkins.plugins.sshagent.SSHAgentBuildWrapper>
+    <org.jenkinsci.plugins.credentialsbinding.impl.SecretBuildWrapper plugin="credentials-binding@1.10">
+      <bindings>
+        <org.jenkinsci.plugins.credentialsbinding.impl.UsernamePasswordMultiBinding>
+          <credentialsId>b4df0136-d403-4e1c-a62b-10d751505d77</credentialsId>
+          <usernameVariable>CLOUD_USER</usernameVariable>
+          <passwordVariable>CLOUD_PASS</passwordVariable>
+        </org.jenkinsci.plugins.credentialsbinding.impl.UsernamePasswordMultiBinding>
+      </bindings>
+    </org.jenkinsci.plugins.credentialsbinding.impl.SecretBuildWrapper>
+  </buildWrappers>
+</project>

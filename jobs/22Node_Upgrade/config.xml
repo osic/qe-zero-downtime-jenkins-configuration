@@ -1,0 +1,130 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<flow-definition plugin="workflow-job@2.9">
+  <actions/>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.ChoiceParameterDefinition>
+          <name>from_release</name>
+          <description>Parameter used to specify what OpenStack release will be installed as starting point.</description>
+          <choices class="java.util.Arrays$ArrayList">
+            <a class="string-array">
+              <string>liberty</string>
+              <string>stable/mitaka</string>
+              <string>stable/newton</string>
+              <string>master</string>
+            </a>
+          </choices>
+        </hudson.model.ChoiceParameterDefinition>
+        <hudson.model.ChoiceParameterDefinition>
+          <name>to_release</name>
+          <description>Parameter used to specify what OpenStack release to upgrade to.</description>
+          <choices class="java.util.Arrays$ArrayList">
+            <a class="string-array">
+              <string>stable/mitaka</string>
+              <string>stable/newton</string>
+              <string>master</string>
+            </a>
+          </choices>
+        </hudson.model.ChoiceParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
+    <org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+      <triggers/>
+    </org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+  </properties>
+  <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@2.23">
+    <script>#!/usr/bin/env groovy
+
+def osa, common
+String workspace_dir 
+String onmetal_ip, elasticsearch_ip, elasticsearch_pkey
+
+// Jenkins must provide these two variables as parameters or the build 
+// will fail:
+//  - from_release
+//  - to_release
+
+
+// *******************************
+stage &apos;Pre-Deployment&apos;
+// *******************************
+
+echo &apos;Load Libs&apos;
+node(&apos;bme-jenkins-slave-n01&apos;) {
+    
+    // Load the external functions using master since the git command
+    // might not be available at the agent yet
+    fileLoader.withGit(&apos;https://github.com/dankolbrs/qa-jenkins-onmetal.git&apos;, &apos;master&apos;, null, &apos;&apos;) {
+        common = fileLoader.load(&apos;jenkins/common.groovy&apos;);
+        osa = fileLoader.load(&apos;jenkins/osa_onmetal.functions.groovy&apos;);
+        bme = fileLoader.load(&apos;jenkins/bme.functions.groovy&apos;);
+    }
+    
+}
+
+node(&apos;elasticsearch&apos;) {
+
+    // Get the server information
+    elasticsearch_ip = common.get_server_ip()
+    elasticsearch_pkey = common.get_server_public_key()
+
+}
+
+node(&apos;bme-jenkins-slave-n01&apos;) {
+
+    // Connect to f5 vpn  
+    withCredentials([[$class: &apos;UsernamePasswordMultiBinding&apos;, credentialsId: &apos;b4df0136-d403-4e1c-a62b-10d751505d77&apos;,
+    usernameVariable: &apos;CLOUD_USER&apos;, passwordVariable: &apos;CLOUD_PASS&apos;]]) {
+    
+    bme.connect_vpn(&quot;72.32.87.87&quot;, &quot;${CLOUD_USER}&quot;, &quot;${CLOUD_PASS}&quot;)
+
+    sh &quot;&quot;&quot;
+    rm -rf qa-jenkins-onmetal
+    &quot;&quot;&quot;
+    git &apos;https://github.com/dankolbrs/qa-jenkins-onmetal.git&apos;
+    sh &quot;&quot;&quot;
+    echo &quot;[deploy_node]&quot; &gt; hosts
+    echo &quot;intelci-node ansible_ssh_host=172.24.0.21 ansible_ssh_user=root&quot; &gt;&gt; hosts
+    &quot;&quot;&quot;
+    sh &quot;&quot;&quot;
+    scp scripts/bme_testsuite_run.sh root@172.24.0.21:/root/bme_testsuite_run.sh
+    &quot;&quot;&quot;
+    
+    //osa.bme_configure_tempest()
+    //bme.run_testsuite(&quot;tempest&quot;, &quot;smoke&quot;, &quot;/openstack/venvs/tempest-untagged&quot;)
+    bme.bash_upgrade_openstack(&quot;master&quot;, 2, true)
+    //osa.bme_run_persistent_resources_tests()    
+    bme.disconnect_vpn()
+    }
+
+    // ssh to deploy host
+    //sh &quot;ssh -t -t -o StrictHostKeyChecking=no root@172.24.0.21&quot; &apos;&apos;&apos;
+    //
+    //server_ip = sh returnStdout: true, script: &apos;ip addr show eth0 | grep &quot;inet\\b&quot; | awk \&apos;{print $2}\&apos; | cut -d/ -f1&apos;
+    //
+    //
+    //&apos;&apos;&apos;
+    //echo &quot;The IP address of the server is: ${server_ip}&quot;
+    //// Get the workspace directory in the agent
+    //workspace_dir = pwd()
+    //echo &quot;The workspace directory is ${workspace_dir}&quot;
+
+    //// Download the project repository and paste the Rax key
+    //git &apos;https://github.com/osic/qa-jenkins-onmetal.git&apos;
+    
+    // Prepare the VMs to run OpenStack
+
+
+    // Add the elasticsearch public key to the deployed onmetal host
+    // common.add_key_to_server(onmetal_ip, elasticsearch_pkey)
+
+}
+
+</script>
+    <sandbox>true</sandbox>
+  </definition>
+  <triggers/>
+</flow-definition>

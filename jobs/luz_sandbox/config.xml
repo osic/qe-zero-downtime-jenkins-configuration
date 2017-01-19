@@ -1,0 +1,72 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<flow-definition plugin="workflow-job@2.7">
+  <actions/>
+  <description>play with rolling upgrade</description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.ChoiceParameterDefinition>
+          <name>to_release</name>
+          <description>release</description>
+          <choices class="java.util.Arrays$ArrayList">
+            <a class="string-array">
+              <string>stable/mitaka</string>
+              <string>stable/newton</string>
+            </a>
+          </choices>
+        </hudson.model.ChoiceParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
+    <org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+      <triggers/>
+    </org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+  </properties>
+  <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@2.18">
+    <script>#!/usr/bin/env groovy
+
+def osa, common
+
+// *******************************
+stage &apos;Pre-Deployment&apos;
+// *******************************
+
+echo &apos;Load qa-jenkins-onmetal project&apos;
+node(&apos;agent-xl&apos;) {
+    // Load the external functions using master since the git command
+    // might not be available at the agent yet
+    fileLoader.withGit(&apos;https://github.com/osic/qa-jenkins-onmetal.git&apos;, &apos;master&apos;, null, &apos;&apos;){
+        common = fileLoader.load(&apos;jenkins/common.groovy&apos;);
+        osa = fileLoader.load(&apos;jenkins/osa_onmetal.functions.groovy&apos;);
+    }
+
+}
+
+// *******************************
+stage &apos;Rolling Upgrade&apos;
+// *******************************
+
+echo &quot;Run pre-upgrade tasks&quot;
+node(&apos;agent-xl&apos;) {
+    
+    String main_path = &apos;/home/ubuntu/openstack-ansible&apos;
+    //luztmp for aio
+    sh&quot;&quot;&quot;
+    git clone https://github.com/osic/qa-jenkins-onmetal.git  /home/ubuntu/qa-jenkins-onmetal
+    &quot;&quot;&quot;
+    
+    //luztmp for aio
+    dir(&apos;/home/ubuntu/qa-jenkins-onmetal&apos;) {
+        //osa.pre_project_upgrade(to_release, main_path)
+        //luz tmp aio
+        release = to_release
+        ansiblePlaybook extras: &quot;-e openstack_release=${release} -e main_path=${main_path}&quot;, inventory: &apos;localhost,&apos;, playbook: &apos;run_pre_upgrade.yaml&apos;, sudoUser: null
+        String project = &apos;keystone&apos;
+        //osa.upgrade_project(project, main_path)
+    }
+}
+</script>
+    <sandbox>true</sandbox>
+  </definition>
+  <triggers/>
+</flow-definition>

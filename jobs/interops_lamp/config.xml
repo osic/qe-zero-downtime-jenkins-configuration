@@ -1,0 +1,85 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<flow-definition plugin="workflow-job@2.5">
+  <actions/>
+  <description>Fires LAMP stack workload on top of Cloud1.&#xd;
+Look at https://github.com/openstack/osops-tools-contrib/tree/master/ansible/lampstack</description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+      <triggers/>
+    </org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+  </properties>
+  <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@2.12">
+    <script>stage &apos;Pre-Deployment&apos;
+
+echo &apos;Preparing Jenkins Agent for interops challenge workloads&apos;
+node(&apos;interops-agent&apos;) {
+    
+    // Wait up to five minutes for cloud-init to finish installing packages
+    timeout(5) {
+        waitUntil {
+            echo &apos;Waiting for cloud-init to finish&apos;
+            def cloud_init = readFile(&apos;/var/log/cloud-init-output.log&apos;)
+            def matcher = cloud_init =~ &apos;Cloud-init .* finished&apos;
+            matcher ? true : false
+        }
+        echo &apos;Cloud-init completed&apos;
+    }
+    echo &apos;Clonning osops woarkloads&apos;
+    sh&quot;&quot;&quot;
+    git clone https://github.com/openstack/osops-tools-contrib.git
+    &quot;&quot;&quot;
+    echo &apos;Clonning refstack-client - Test tool&apos;
+    sh&quot;&quot;&quot;
+    git clone https://github.com/openstack/refstack-client.git
+    &quot;&quot;&quot;
+    echo &apos;Install refstack-client&apos;
+    sh&quot;&quot;&quot;
+    cd refstack-client
+    ./setup_env
+    &quot;&quot;&quot;
+    echo &apos;Define cloud1 information for LAMP stack workload&apos;
+    sh&quot;&quot;&quot;
+    cat &lt;&lt;EOF &gt; osops-tools-contrib/ansible/lampstack/vars/cloud1.yml
+---
+auth: {
+  auth_url: &apos;https://cloud1.osic.org:5000/v3&apos;,
+  username: &apos;luz.cazares&apos;,
+  password: &apos;notAg@in2&apos;,
+  project_name: &apos;osic-engineering&apos;
+}
+
+app_env: {
+  image_name: &apos;ubuntu-server-15.04&apos;,
+  private_net_name: &apos;interops&apos;,
+  public_net_name: &apos;GATEWAY_NET&apos;,
+  flavor_name: &apos;m1.small&apos;,
+  public_key_file: &apos;/etc/ssh/ssh_host_rsa_key.pub&apos;,
+  stack_size: 4,
+  volume_size: 10,
+  wp_theme: &apos;https://downloads.wordpress.org/theme/iribbon.2.0.65.zip&apos;,
+  wp_posts: &apos;http://wpcandy.s3.amazonaws.com/resources/postsxml.zip&apos;
+}
+EOF
+    &quot;&quot;&quot;
+    echo &apos;Add execution permissions to cloud1 configuration&apos;
+    sh&quot;&quot;&quot;
+    chmod +x osops-tools-contrib/ansible/lampstack/vars/cloud1.yml
+    &quot;&quot;&quot;
+    echo &apos;Create tempest configuration&apos;
+    sh&quot;&quot;&quot;
+    echo &apos;tempest.conf&apos;
+    &quot;&quot;&quot;
+    
+}
+/*
+stage &apos;Deployment&apos;
+node(&apos;interops-agent&apos;){
+    echo &apos;Fire ansible playbook - LAMP stack&apos;
+    ansiblePlaybook extras: &apos;action=apply env=cloud1&apos;, playbook: &apos;osops-tools-contrib/ansible/lampstack/site.yml&apos;
+    //Run refstack tests 
+}*/</script>
+    <sandbox>true</sandbox>
+  </definition>
+  <triggers/>
+</flow-definition>

@@ -1,0 +1,5 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<jenkins.model.JenkinsLocationConfiguration>
+  <adminAddress>castulo.martinez@intel.com</adminAddress>
+  <jenkinsUrl>http://172.99.106.115/jenkins/</jenkinsUrl>
+</jenkins.model.JenkinsLocationConfiguration>

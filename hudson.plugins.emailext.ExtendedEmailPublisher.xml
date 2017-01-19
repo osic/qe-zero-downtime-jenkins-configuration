@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<hudson.plugins.emailext.ExtendedEmailPublisherDescriptor plugin="email-ext@2.52">
+  <defaultSuffix>CI-Infra-Jenkins@osic.org</defaultSuffix>
+  <smtpAuthUsername>castulojavier@gmail.com</smtpAuthUsername>
+  <smtpAuthPassword>kmVPrCuKN/8B9doZiIKKGuqpaXNLcJhbH75oynvDOcY=</smtpAuthPassword>
+  <smtpHost>smtp.gmail.com</smtpHost>
+  <useSsl>true</useSsl>
+  <smtpPort>465</smtpPort>
+  <charset>UTF-8</charset>
+  <defaultContentType>text/html</defaultContentType>
+  <defaultSubject>$PROJECT_NAME - Build # $BUILD_NUMBER - $BUILD_STATUS!</defaultSubject>
+  <defaultBody>$PROJECT_NAME - Build # $BUILD_NUMBER - $BUILD_STATUS:&#xd;
+&#xd;
+Check console output at $BUILD_URL to view the results.</defaultBody>
+  <defaultPresendScript></defaultPresendScript>
+  <defaultPostsendScript></defaultPostsendScript>
+  <defaultClasspath/>
+  <defaultTriggerIds>
+    <string>hudson.plugins.emailext.plugins.trigger.AlwaysTrigger</string>
+    <string>hudson.plugins.emailext.plugins.trigger.FailureTrigger</string>
+    <string>hudson.plugins.emailext.plugins.trigger.SuccessTrigger</string>
+  </defaultTriggerIds>
+  <maxAttachmentSize>-1</maxAttachmentSize>
+  <recipientList></recipientList>
+  <defaultReplyTo></defaultReplyTo>
+  <excludedCommitters></excludedCommitters>
+  <overrideGlobalSettings>true</overrideGlobalSettings>
+  <precedenceBulk>false</precedenceBulk>
+  <debugMode>false</debugMode>
+  <requireAdminForTemplateTesting>false</requireAdminForTemplateTesting>
+  <enableWatching>false</enableWatching>
+</hudson.plugins.emailext.ExtendedEmailPublisherDescriptor>

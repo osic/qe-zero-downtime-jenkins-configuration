@@ -1,0 +1,106 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<flow-definition plugin="workflow-job@2.9">
+  <actions/>
+  <description>Job to rebuild BME.&#xd;
+&#xd;
+Parameterized to allow:&#xd;
+Full rebuild&#xd;
+Full rebuild and redeploy&#xd;
+Destroy OpenStack deploy&#xd;
+Destroy OpenStack deploy and redeploy</description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.BooleanParameterDefinition>
+          <name>full</name>
+          <description>Boolean value:
+True  - Full rebuild of Bare Metal Environment servers cleaned and brought up from PXE boot (adds ~30 minutes)
+False - Destroy only deployed containers and deploy information (ansible facts, deployed parameters)
+
+You probably want this to be selected</description>
+          <defaultValue>true</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
+        <hudson.model.BooleanParameterDefinition>
+          <name>redeploy</name>
+          <description>Boolean value:
+True  - Redeploy OpenStack on environment
+False - Do not redeploy OpenStack on rebuild environment
+
+You probably want this to be selected</description>
+          <defaultValue>true</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
+    <org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+      <triggers/>
+    </org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+  </properties>
+  <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@2.23">
+    <script>#!/usr/bin/env groovy
+
+def osa, common
+String workspace_dir 
+String onmetal_ip, elasticsearch_ip, elasticsearch_pkey
+
+// Jenkins must provide these two boolean variables as parameters or the build 
+// will fail:
+//  - full
+//  - redeploy
+
+
+// *******************************
+stage &apos;Pre-Deployment - Load Libraries&apos;
+// *******************************
+
+echo &apos;Load Libs&apos;
+node(&apos;bme-jenkins-slave-n01&apos;) {
+    
+    // Load the external functions using master since the git command
+    // might not be available at the agent yet
+    fileLoader.withGit(&apos;https://github.com/dankolbrs/qa-jenkins-onmetal.git&apos;, &apos;master&apos;, null, &apos;&apos;) {
+        common = fileLoader.load(&apos;jenkins/common.groovy&apos;);
+        osa = fileLoader.load(&apos;jenkins/osa_onmetal.functions.groovy&apos;);
+    }
+    
+}
+
+// *******************************
+stage &apos;Pre-Deployment - Connect VPN&apos;
+// *******************************
+
+node(&apos;bme-jenkins-slave-n01&apos;) {
+
+    // Connect to f5 vpn  
+    withCredentials([[$class: &apos;UsernamePasswordMultiBinding&apos;, credentialsId: &apos;b4df0136-d403-4e1c-a62b-10d751505d77&apos;,
+    usernameVariable: &apos;CLOUD_USER&apos;, passwordVariable: &apos;CLOUD_PASS&apos;]]) {
+    osa.bme_connect_vpn(&quot;72.32.87.87&quot;, &quot;${CLOUD_USER}&quot;, &quot;${CLOUD_PASS}&quot;)
+    }
+}
+
+// *******************************
+stage &apos;Deployment - Rebuild BME&apos;
+// *******************************
+
+node(&apos;bme-jenkins-slave-n01&apos;) {
+    git &apos;https://github.com/dankolbrs/qa-jenkins-onmetal.git&apos;
+    sh &quot;&quot;&quot;
+    echo &quot;[deploy_node]&quot; &gt; hosts
+    echo &quot;intelci-node ansible_ssh_host=172.24.0.21 ansible_ssh_user=root&quot; &gt;&gt; hosts
+    &quot;&quot;&quot;
+    osa.bme_rebuild_environment(&quot;${full}&quot;, &quot;${redeploy}&quot;)
+}
+
+// *******************************
+stage &apos;Post Deployment - Disconnect VPN&apos;
+// *******************************
+node(&apos;bme-jenkins-slave-n01&apos;) {
+    osa.bme_disconnect_vpn()
+}
+
+
+</script>
+    <sandbox>true</sandbox>
+  </definition>
+  <triggers/>
+</flow-definition>

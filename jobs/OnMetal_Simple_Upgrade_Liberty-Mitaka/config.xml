@@ -1,0 +1,55 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<flow-definition plugin="workflow-job@2.7">
+  <actions/>
+  <description>All in one OpenStack provisioned on an onMetal server using ansible.</description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.StringParameterDefinition>
+          <name>from_release</name>
+          <description>Parameter used to specify what OpenStack release will be installed as starting point.</description>
+          <defaultValue>liberty</defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>to_release</name>
+          <description>Parameter used to specify what OpenStack release to upgrade to.</description>
+          <defaultValue>stable/mitaka</defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.ChoiceParameterDefinition>
+          <name>datacenter</name>
+          <description>The Rax public cloud datacenter where OnMetal server will be provisioned</description>
+          <choices class="java.util.Arrays$ArrayList">
+            <a class="string-array">
+              <string>dfw</string>
+              <string>iad</string>
+            </a>
+          </choices>
+        </hudson.model.ChoiceParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
+    <org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+      <triggers/>
+    </org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+  </properties>
+  <definition class="org.jenkinsci.plugins.workflow.cps.CpsScmFlowDefinition" plugin="workflow-cps@2.19">
+    <scm class="hudson.plugins.git.GitSCM" plugin="git@3.0.0">
+      <configVersion>2</configVersion>
+      <userRemoteConfigs>
+        <hudson.plugins.git.UserRemoteConfig>
+          <url>https://github.com/osic/qa-jenkins-onmetal.git</url>
+        </hudson.plugins.git.UserRemoteConfig>
+      </userRemoteConfigs>
+      <branches>
+        <hudson.plugins.git.BranchSpec>
+          <name>*/master</name>
+        </hudson.plugins.git.BranchSpec>
+      </branches>
+      <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
+      <submoduleCfg class="list"/>
+      <extensions/>
+    </scm>
+    <scriptPath>jenkins/onmetal_simple_upgrade.pipeline</scriptPath>
+  </definition>
+  <triggers/>
+</flow-definition>

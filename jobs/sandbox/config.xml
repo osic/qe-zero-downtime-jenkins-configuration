@@ -1,0 +1,64 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<flow-definition plugin="workflow-job@2.9">
+  <actions/>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+      <triggers/>
+    </org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+  </properties>
+  <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@2.23">
+    <script>
+String elasticsearch_ip, elasticsearch_pkey
+String host_ip = &apos;172.99.84.142&apos;
+
+stage &apos;Sandbox&apos;
+
+node(&apos;master&apos;) {
+
+    // Load the external functions using master since the git command
+    // might not be available at the agent yet
+    fileLoader.withGit(&apos;https://github.com/osic/qa-jenkins-onmetal.git&apos;, &apos;master&apos;, null, &apos;&apos;) {
+        common = fileLoader.load(&apos;jenkins/common.groovy&apos;);
+        osa = fileLoader.load(&apos;jenkins/osa_onmetal.functions.groovy&apos;);
+    }
+
+}
+
+node(&apos;elasticsearch&apos;) {
+
+    // Get the server information
+    elasticsearch_ip = common.get_server_ip()
+    elasticsearch_pkey = common.get_server_public_key()
+
+}
+
+node(&apos;onmetal-provisioner&apos;) {
+
+    // Add the elasticsearch public key to the deployed onmetal host
+    common.add_key_to_server(host_ip, elasticsearch_pkey)
+
+}
+
+
+def get_elasticsearch_server_info() {
+
+    String elasticsearch_ip, elasticsearch_pkey
+
+    // Get the IP of the Elasticsearch/Kibana server
+    elasticsearch_ip = sh returnStdout: true, script: &apos;ip addr show eth0 | grep &quot;inet\\b&quot; | awk \&apos;{print $2}\&apos; | cut -d/ -f1&apos;
+    echo &quot;The IP address of the ElasticSearch server is: ${elasticsearch_ip}&quot;
+
+    // Get the public key from the elasticsearch server
+    elasticsearch_pkey = sh returnStdout: true, script: &apos;cat /home/ubuntu/.ssh/id_rsa.pub&apos;
+    
+    //def sampleMap = [color:&apos;Blue&apos;, shape:&apos;Circle&apos;]
+    def elasticsearch_info = [&apos;ip&apos;: elasticsearch_ip, &apos;pkey&apos;: elasticsearch_pkey]
+    return (elasticsearch_info)
+
+}</script>
+    <sandbox>true</sandbox>
+  </definition>
+  <triggers/>
+</flow-definition>

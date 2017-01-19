@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<hudson.tasks.Mailer_-DescriptorImpl plugin="mailer@1.18">
+  <defaultSuffix>CI-Infra-Jenkins@osic.org</defaultSuffix>
+  <hudsonUrl>http://172.99.106.115:8080/</hudsonUrl>
+  <smtpAuthUsername>castulojavier@gmail.com</smtpAuthUsername>
+  <smtpAuthPassword>kmVPrCuKN/8B9doZiIKKGuqpaXNLcJhbH75oynvDOcY=</smtpAuthPassword>
+  <smtpHost>smtp.gmail.com</smtpHost>
+  <useSsl>true</useSsl>
+  <smtpPort>465</smtpPort>
+  <charset>UTF-8</charset>
+</hudson.tasks.Mailer_-DescriptorImpl>

@@ -1,0 +1,185 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<hudson>
+  <disabledAdministrativeMonitors>
+    <string>hudson.diagnosis.ReverseProxySetupMonitor</string>
+  </disabledAdministrativeMonitors>
+  <version>2.19.1</version>
+  <numExecutors>5</numExecutors>
+  <mode>NORMAL</mode>
+  <useSecurity>true</useSecurity>
+  <authorizationStrategy class="hudson.security.FullControlOnceLoggedInAuthorizationStrategy">
+    <denyAnonymousReadAccess>false</denyAnonymousReadAccess>
+  </authorizationStrategy>
+  <securityRealm class="hudson.security.HudsonPrivateSecurityRealm">
+    <disableSignup>true</disableSignup>
+    <enableCaptcha>false</enableCaptcha>
+  </securityRealm>
+  <disableRememberMe>false</disableRememberMe>
+  <projectNamingStrategy class="jenkins.model.ProjectNamingStrategy$DefaultProjectNamingStrategy"/>
+  <workspaceDir>${JENKINS_HOME}/workspace/${ITEM_FULLNAME}</workspaceDir>
+  <buildsDir>${ITEM_ROOTDIR}/builds</buildsDir>
+  <systemMessage>OSIC QE/QA Team</systemMessage>
+  <markupFormatter class="hudson.markup.EscapedMarkupFormatter"/>
+  <jdks/>
+  <viewsTabBar class="hudson.views.DefaultViewsTabBar"/>
+  <myViewsTabBar class="hudson.views.DefaultMyViewsTabBar"/>
+  <clouds>
+    <jenkins.plugins.openstack.compute.JCloudsCloud plugin="openstack-cloud@2.14">
+      <name>Cloud1</name>
+      <endPointUrl>https://cloud1.osic.org:5000/v2.0</endPointUrl>
+      <identity>osic-engineering:castulo.martinez</identity>
+      <credential>2+gUlxjSHoDP6Hn5WJPABGcqpmOE1gaY34+nBDrkdJ8=</credential>
+      <zone>RegionOne</zone>
+      <templates class="java.util.Collections$UnmodifiableRandomAccessList" resolves-to="java.util.Collections$UnmodifiableList">
+        <c class="list">
+          <jenkins.plugins.openstack.compute.JCloudsSlaveTemplate>
+            <name>ci-openstack-agent-xlarge</name>
+            <labelString>agent-xl</labelString>
+            <slaveOptions>
+              <hardwareId>5</hardwareId>
+              <retentionTime>-1</retentionTime>
+            </slaveOptions>
+          </jenkins.plugins.openstack.compute.JCloudsSlaveTemplate>
+          <jenkins.plugins.openstack.compute.JCloudsSlaveTemplate>
+            <name>ci-openstack-agent-small</name>
+            <labelString>agent-sm</labelString>
+            <slaveOptions/>
+          </jenkins.plugins.openstack.compute.JCloudsSlaveTemplate>
+          <jenkins.plugins.openstack.compute.JCloudsSlaveTemplate>
+            <name>ci-onmetal-provisioner</name>
+            <labelString>onmetal-provisioner</labelString>
+            <slaveOptions>
+              <userDataId>jenkins.plugins.openstack.compute.UserDataConfig.1471553284027</userDataId>
+              <retentionTime>-1</retentionTime>
+            </slaveOptions>
+          </jenkins.plugins.openstack.compute.JCloudsSlaveTemplate>
+          <jenkins.plugins.openstack.compute.JCloudsSlaveTemplate>
+            <name>interops-agent</name>
+            <labelString>interops-agent</labelString>
+            <slaveOptions>
+              <hardwareId>3</hardwareId>
+              <networkId>62e7d710-4348-43d9-8660-fd0edd6887f9</networkId>
+              <userDataId>jenkins.plugins.openstack.compute.UserDataConfig.1471643505815</userDataId>
+              <retentionTime>-1</retentionTime>
+            </slaveOptions>
+          </jenkins.plugins.openstack.compute.JCloudsSlaveTemplate>
+          <jenkins.plugins.openstack.compute.JCloudsSlaveTemplate>
+            <name>ci-temp-agent-cas</name>
+            <labelString>cas-agent</labelString>
+            <slaveOptions>
+              <hardwareId>5</hardwareId>
+              <retentionTime>-1</retentionTime>
+            </slaveOptions>
+          </jenkins.plugins.openstack.compute.JCloudsSlaveTemplate>
+        </c>
+        <list reference="../c"/>
+      </templates>
+      <slaveOptions>
+        <imageId>ubuntu-server-14.04.5</imageId>
+        <hardwareId>2</hardwareId>
+        <networkId>fd0e26e9-5705-491e-b8ad-4872880c3d77</networkId>
+        <userDataId>jenkins.plugins.openstack.compute.UserDataConfig.1470757175885</userDataId>
+        <securityGroups>ci-infra-secgrp</securityGroups>
+        <keyPairName>ci-infra-kp</keyPairName>
+        <numExecutors>5</numExecutors>
+        <fsRoot>/home/ubuntu/</fsRoot>
+        <credentialsId>fb4fe359-96e5-49ae-8cbd-cd4737230b71</credentialsId>
+        <retentionTime>90</retentionTime>
+      </slaveOptions>
+    </jenkins.plugins.openstack.compute.JCloudsCloud>
+  </clouds>
+  <quietPeriod>0</quietPeriod>
+  <scmCheckoutRetryCount>0</scmCheckoutRetryCount>
+  <views>
+    <hudson.model.AllView>
+      <owner class="hudson" reference="../../.."/>
+      <name>All</name>
+      <filterExecutors>false</filterExecutors>
+      <filterQueue>false</filterQueue>
+      <properties class="hudson.model.View$PropertyList"/>
+    </hudson.model.AllView>
+    <listView>
+      <owner class="hudson" reference="../../.."/>
+      <name>All in One onMetal</name>
+      <filterExecutors>false</filterExecutors>
+      <filterQueue>false</filterQueue>
+      <properties class="hudson.model.View$PropertyList"/>
+      <jobNames>
+        <comparator class="hudson.util.CaseInsensitiveComparator"/>
+        <string>Joshs_sandbox</string>
+        <string>onMetal_Sandbox</string>
+        <string>OnMetal_Simple_Upgrade_Liberty-Mitaka</string>
+        <string>OnMetal_Simple_Upgrade_Mitaka-Newton</string>
+      </jobNames>
+      <jobFilters/>
+      <columns>
+        <hudson.views.StatusColumn/>
+        <hudson.views.WeatherColumn/>
+        <hudson.views.JobColumn/>
+        <hudson.views.LastSuccessColumn/>
+        <hudson.views.LastFailureColumn/>
+        <hudson.views.LastDurationColumn/>
+        <hudson.views.BuildButtonColumn/>
+      </columns>
+      <recurse>false</recurse>
+    </listView>
+    <listView>
+      <owner class="hudson" reference="../../.."/>
+      <name>All In One VM</name>
+      <filterExecutors>false</filterExecutors>
+      <filterQueue>false</filterQueue>
+      <properties class="hudson.model.View$PropertyList"/>
+      <jobNames>
+        <comparator class="hudson.util.CaseInsensitiveComparator" reference="../../../listView/jobNames/comparator"/>
+        <string>AIO_Upgrade_Sandbox_Cas</string>
+        <string>all_in_one_sandbox</string>
+        <string>All_In_One_VM</string>
+        <string>All_In_One_VM (KC Sandbox)</string>
+        <string>luz_sandbox</string>
+        <string>test_bme_vpn_connection</string>
+      </jobNames>
+      <jobFilters/>
+      <columns>
+        <hudson.views.StatusColumn/>
+        <hudson.views.WeatherColumn/>
+        <hudson.views.JobColumn/>
+        <hudson.views.LastSuccessColumn/>
+        <hudson.views.LastFailureColumn/>
+        <hudson.views.LastDurationColumn/>
+        <hudson.views.BuildButtonColumn/>
+      </columns>
+      <recurse>false</recurse>
+    </listView>
+    <listView>
+      <owner class="hudson" reference="../../.."/>
+      <name>Cloud 5 - 22 Node BME</name>
+      <description>This view contains all pipelines associated with the Cloud 5, 22 node bare metal environment.</description>
+      <filterExecutors>false</filterExecutors>
+      <filterQueue>false</filterQueue>
+      <properties class="hudson.model.View$PropertyList"/>
+      <jobNames>
+        <comparator class="hudson.util.CaseInsensitiveComparator"/>
+        <string>22Node_Upgrade</string>
+        <string>Rebuild BME</string>
+        <string>test_bme_vpn_connection</string>
+      </jobNames>
+      <jobFilters/>
+      <columns>
+        <hudson.views.StatusColumn/>
+        <hudson.views.WeatherColumn/>
+        <hudson.views.JobColumn/>
+        <hudson.views.LastSuccessColumn/>
+        <hudson.views.LastFailureColumn/>
+        <hudson.views.LastDurationColumn/>
+        <hudson.views.BuildButtonColumn/>
+      </columns>
+      <recurse>false</recurse>
+    </listView>
+  </views>
+  <primaryView>All</primaryView>
+  <slaveAgentPort>-1</slaveAgentPort>
+  <label>master</label>
+  <nodeProperties/>
+  <globalNodeProperties/>
+  <noUsageStatistics>true</noUsageStatistics>
+</hudson>

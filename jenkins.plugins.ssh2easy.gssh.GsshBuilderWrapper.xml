@@ -1,0 +1,5 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<jenkins.plugins.ssh2easy.gssh.GsshBuilderWrapper_-GsshDescriptorImpl plugin="ssh2easy@1.4">
+  <serverGroups/>
+  <servers/>
+</jenkins.plugins.ssh2easy.gssh.GsshBuilderWrapper_-GsshDescriptorImpl>

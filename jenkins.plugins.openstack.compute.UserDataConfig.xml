@@ -1,0 +1,108 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<jenkins.plugins.openstack.compute.UserDataConfig_-UserDataConfigProvider plugin="openstack-cloud@2.14">
+  <configs>
+    <entry>
+      <string>jenkins.plugins.openstack.compute.UserDataConfig.1471643505815</string>
+      <org.jenkinsci.lib.configprovider.model.Config plugin="config-file-provider@2.13">
+        <id>jenkins.plugins.openstack.compute.UserDataConfig.1471643505815</id>
+        <name>interops_deployer</name>
+        <comment>Agent to run different woarkloads on top of osic1 cloud</comment>
+        <content>#cloud-config
+
+packages:
+ - build-essential
+ - curl
+ - git
+ - libssl-dev
+ - libffi-dev
+ - libxml2-dev
+ - libxslt1-dev
+ - libpq-dev
+ - python-dev
+ - python-pip
+ - vim
+ - wget
+
+runcmd:
+ - sudo sed -i &quot;li127.0.1.1 $(hostname)&quot; /etc/hosts
+ - pip install ansible&gt;=2.0
+ - pip install shade</content>
+        <providerId>jenkins.plugins.openstack.compute.UserDataConfig</providerId>
+      </org.jenkinsci.lib.configprovider.model.Config>
+    </entry>
+    <entry>
+      <string>jenkins.plugins.openstack.compute.UserDataConfig.1471553284027</string>
+      <org.jenkinsci.lib.configprovider.model.Config plugin="config-file-provider@2.13">
+        <id>jenkins.plugins.openstack.compute.UserDataConfig.1471553284027</id>
+        <name>onmetal_deployer_setup</name>
+        <comment>Initial setup for an onmetal deployer</comment>
+        <content>#cloud-config
+
+packages:
+ - build-essential
+ - curl
+ - git
+ - libssl-dev 
+ - libffi-dev
+ - libxml2-dev 
+ - libxslt1-dev 
+ - libpq-dev
+ - libvirt-dev
+ - pkg-config
+ - python-dev
+ - python-pip
+ - vim
+ - wget
+
+runcmd:
+ - sudo sed -i &quot;1i127.0.1.1 $(hostname)&quot; /etc/hosts
+ - pip install ansible&gt;=2.0
+ - pip install pyrax
+ - pip install libvirt-python
+ - curl https://ec4a542dbf90c03b9f75-b342aba65414ad802720b41e8159cf45.ssl.cf5.rackcdn.com/1.2/Linux/amd64/rack -o /usr/local/bin/rack
+ - chmod +x /usr/local/bin/rack
+ - sudo ssh-keygen -t rsa -f /root/.ssh/id_rsa -q -P &quot;&quot;
+ - sudo cp /root/.ssh/id_rsa /home/ubuntu/.ssh/
+ - sudo cp /root/.ssh/id_rsa.pub /home/ubuntu/.ssh/
+ - sudo chown ubuntu:ubuntu /home/ubuntu/.ssh/id_rsa.pub
+ - sudo chown ubuntu:ubuntu /home/ubuntu/.ssh/id_rsa
+ </content>
+        <providerId>jenkins.plugins.openstack.compute.UserDataConfig</providerId>
+      </org.jenkinsci.lib.configprovider.model.Config>
+    </entry>
+    <entry>
+      <string>jenkins.plugins.openstack.compute.UserDataConfig.1470757175885</string>
+      <org.jenkinsci.lib.configprovider.model.Config plugin="config-file-provider@2.13">
+        <id>jenkins.plugins.openstack.compute.UserDataConfig.1470757175885</id>
+        <name>vm_initial_setup</name>
+        <comment>Installs arbitrary packages</comment>
+        <content>#cloud-config
+
+runcmd:
+ - sudo sed -i &quot;1i127.0.1.1 $(hostname)&quot; /etc/hosts
+ - echo &quot;ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC5SqI23+5xQIoXn6PTlcMZn4gEjlEIZLhrAvswb0338Yxc8FSYangr6SL5pYi3u5Ax+XEg/P9N/Rgk4v1SNYQLVSUw0ZyqBMhnKFEdgGosg2UE956bAfGD6MqBuaEUORL7psHw5hoGZ2JqJ5SJQxx/jDgOftBdBGt4qB7QNp1qK1Rqsx4kFr7r77D+zggvGvzAkljybB7X4kBI5vmisg1stCoOsfrqm4TiUID4aVhm7SUOe3q5KCVle8xapNCWtV+xS1SrBAwpL5Rz/DiS5aiwq4q+MT06SXN+mNxYbw+QO6hY7a6dmSKGEc9EWo/H4/eLpEMd2S31IG0aS0j9Lyld&quot; &gt; /home/ubuntu/.ssh/id_rsa.pub
+ - echo &quot;-----BEGIN RSA PRIVATE KEY-----\nMIIEogIBAAKCAQEAuUqiNt/ucUCKF5+j05XDGZ+IBI5RCGS4awL7MG9N9/GMXPBU\nmGp4K+ki+aWIt7uQMflxIPz/Tf0YJOL9UjWEC1UlMNGcqgTIZyhRHYBqLINlBPee\nmwHxg+jKgbmhFDkS+6bB8OYaBmdiaieUiUMcf4w4Dn7QXQRreKge0DadaitUarMe\nJBa+6++w/s4ILxr8wJJY8mwe1+JASOb5orINbLQqDrH66puE4lCA+GlYZu0lDnt6\nuSglZXvMWqTQlrVfsUtUqwQMKS+Uc/w4kuWosKuKvjE9OklzfpjcWG8PkDuoWO2u\nnZkihhHPRFqPx+P3i6RDHdkt9SBtGktI/S8pXQIDAQABAoIBAD9visuorLR/OQfP\ncsIMgsfx8xpEMv/ho7WXRrIVWScqvjhPW1b3FH9MCNpZTs5AW6SQVqfJlgp4PNzc\nDYgopDVRCDOHf9BBZO7UQbkM7sygi2RA9j7xUmMrvrDdAYWv6IzZUYqM7JoGqQ3Y\n0SSRIl+UfNiRl/pQeg7L2AjGuevPpqzhnYR1B+hXlvUGFOqkWA8YwKJFDY06m/4M\n0OKbt9TbnWIEVRZtcnjdGm/Jq2tLA4VmQzTPn/CCHb/HsgEucILyAAT5kvHuQMbz\nKuQHsJWgUTH3iNd+2ZfmtQIn6Xnbh8KiEAOBRuMwDc77rF0WWf2YnmMbFgtONxYV\nlWcaDM0CgYEA2jTzh7BEitSYhNQq+GLeTEhsLaJszWF+Z/XMUmQBE2kSHhTdl2wp\niRbvLOPJT/dlzvrOagw+g9/NC/IneMa0Pnb8C9VlAQStharQAb5QSh/2leWuhpy7\nwJ5zV1nVCF2iokfHsVu8rbSeZJ9eEFShQ/QSaX38CtdAUESsi4TPwLsCgYEA2WJB\nIRF/S9eLBrxTyaGSuNm3PzX2w1Efv88bcPmzhBaOf8nvU2ixNLyh28E93H9KvcZv\n Rkn1P7dtqubqbCVjxTchyG4AtjECxjHhYS5ZO66f0PV7pDj94M10OY4Ucn9RESHv\nIqbhKf/SFUbIOdecwfIzngvIcxsWqHaXnWmXiMcCgYBE4ZI+sxXv/UxoIdGutwcV\nbYc4oJ1X9/6/MohdOdRdHD3r4QpSUoKKFANMWFukMqSgweuG7naNiohfzQFIzvD3\nBvhpg+NuftuH5nPjGQCfZZehme+N7swV8e7XFDR7f5NnRuFyy1K0Qt/9Q5Gd9hky\nKknloy98/JYAwKz3HeW3IQKBgH7Qat43ruM3ossTIm4F6+oaWGRvvrzCnpru3ztQ\n8ACmiArUauFlubriMCpa2RPAzoFXOaLvkjrRbxC8FRVx2no6Z2LdiVy/yraEcs6W\nk0fV3zWvf6mV9cUnFh5dXGBPFaPBABhe8gvmSVBQMo5L0g7ylFom1ZEQxG8Sf/A8\noUIRAoGAA5WVnI+anH8fBpZyBEm5IGFeoj1cKnKWz865S2cGLRInmkl8F5TuOxWA\nUKj1Gj6tEtDf9SzOwvXP8b7ZU4+lWybUQE2DIJpi3pGrdWXbwmHkUxFf3A+pXmQ6\nxNLeZsqApSSNypWbGUuTMpof6/Md+eZvzX7y6GbyhX/dYcCGDIc=\n-----END RSA PRIVATE KEY-----&quot; &gt; /home/ubuntu/.ssh/id_rsa
+# - ssh-keygen -t rsa -b 4096 -f /home/ubuntu/.ssh/id_rsa -q -N &quot;&quot;
+
+# Install the following packages
+packages:
+ - git
+ - python-pip
+ - vim
+ - build-essential
+ - libssl-dev 
+ - libffi-dev 
+ - python-dev 
+ - libxml2-dev 
+ - libxslt1-dev 
+ - libpq-dev
+
+# Allowing: ElasticSearch server to access the VM 
+ssh_authorized_keys:
+ - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDORlpt1kdCY8awA0W6GX5roelSqRmDyRNgU6iYIfd2CH4dR9fsJxXZtcDVkISJ/fiOEQxv29S3RsDZR6/MyFvgtH1EThCZZupV2MWq9VBdPO5mPRFpNYSl9TkKaVE0ByNjY3a+ng1cQLQYO4D2gDA/TsxbtJH2AUsh5mc4PuOPSm3y4aWIlDsClqtPlT8/aBzMh5svYK4vZfVHdmuabcyDcrPbaQL+GrNlSwb+sM0d0u5v+ebx+Fxvl0HI9FVrL/IaeH8vkHJMJSkT5HWIR1h0Ysl+BGAShSwS9t/HulpWOk/+1bPulXKNzqazb0I1D/AFjEep1iRFTVmEHkVdcryN ubuntu@ci-elasticsearch
+</content>
+        <providerId>jenkins.plugins.openstack.compute.UserDataConfig</providerId>
+      </org.jenkinsci.lib.configprovider.model.Config>
+    </entry>
+  </configs>
+</jenkins.plugins.openstack.compute.UserDataConfig_-UserDataConfigProvider>

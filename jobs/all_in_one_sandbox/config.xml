@@ -1,0 +1,114 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<flow-definition plugin="workflow-job@2.7">
+  <actions/>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.ChoiceParameterDefinition>
+          <name>from_release</name>
+          <description></description>
+          <choices class="java.util.Arrays$ArrayList">
+            <a class="string-array">
+              <string>stable/mitaka</string>
+              <string>stable/newton</string>
+              <string>master</string>
+            </a>
+          </choices>
+        </hudson.model.ChoiceParameterDefinition>
+        <hudson.model.ChoiceParameterDefinition>
+          <name>to_release</name>
+          <description></description>
+          <choices class="java.util.Arrays$ArrayList">
+            <a class="string-array">
+              <string>stable/newton</string>
+              <string>master</string>
+            </a>
+          </choices>
+        </hudson.model.ChoiceParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
+    <org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+      <triggers/>
+    </org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+  </properties>
+  <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@2.19">
+    <script>#!/usr/bin/env groovy
+
+def osa, common
+
+// Jenkins must provide these variables as parameters or the build 
+// will fail:
+//  - from_release
+//  - to_release
+
+
+// *******************************
+stage &apos;Deployment&apos;
+// *******************************
+
+echo &apos;Deploying OpenStack using OSA for single node&apos;
+node(&apos;master&apos;) {
+    
+    // Load the external functions using master since the git command
+    // might not be available at the agent yet
+    fileLoader.withGit(&apos;https://github.com/CasJ/openstack_one_node_ci.git&apos;, &apos;master&apos;, null, &apos;&apos;) {
+        common = fileLoader.load(&apos;common.groovy&apos;);
+        osa = fileLoader.load(&apos;osa_aio.functions.groovy&apos;);
+    }
+    
+}
+
+node(&apos;agent-xl&apos;) {
+    
+    // Wait for cloud-init to finish
+    common.wait_for_agent_setup()
+
+    // Deploy OpenStack
+    //osa.deploy_openstack_aio(from_release)
+
+}
+
+
+// *******************************
+stage &apos;Post-Deployment Validation&apos;
+// *******************************
+
+echo &apos;Running tests to validate the OpenStack deployment&apos;
+node(&apos;agent-xl&apos;) {
+   
+    // Install latest version of Tempest in the host
+    //osa.install_tempest()
+
+    // Run the smoke tests
+    //osa.run_tempest_smoke_tests(&apos;smoke_results&apos;)
+    
+}
+
+// *******************************
+stage &apos;Rolling Upgrade&apos;
+// *******************************
+
+echo &quot;Upgrading OpenStack from ${from_release} to ${to_release}&quot;
+node(&apos;agent-xl&apos;) {
+
+    // Install latest version of Tempest in the host
+    rolling_upgrade(to_release)
+
+}
+
+def rolling_upgrade(to_release = &apos;master&apos;) {
+
+    git &apos;https://github.com/osic/qa-jenkins-onmetal.git&apos;
+    //ansiblePlaybook extras: &quot;-e openstack_release=${to_release}&quot;, inventory: &apos;localhost,&apos;, playbook: &apos;prepare_for_upgrade.yaml&apos;, sudo: true, sudoUser: null
+    //ansiblePlaybook extras: &quot;-e openstack_release=${to_release}&quot;, inventory: &apos;localhost,&apos;, playbook: &apos;prepare_for_upgrade.yaml&apos;
+    sh &quot;&quot;&quot;
+    sudo ansible-playbook prepare_for_upgrade.yaml -i localhost, -e openstack_release=${to_release}
+    &quot;&quot;&quot;
+
+}</script>
+    <sandbox>true</sandbox>
+  </definition>
+  <triggers/>
+</flow-definition>
