@@ -1,0 +1,226 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<flow-definition plugin="workflow-job@2.9">
+  <actions/>
+  <description>Project to test and play with an all in one deployment in a VM</description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.ChoiceParameterDefinition>
+          <name>from_release</name>
+          <description>Parameter used to specify what OpenStack release will be installed as starting point.</description>
+          <choices class="java.util.Arrays$ArrayList">
+            <a class="string-array">
+              <string>stable/mitaka</string>
+              <string>stable/newton</string>
+              <string>master</string>
+            </a>
+          </choices>
+        </hudson.model.ChoiceParameterDefinition>
+        <hudson.model.ChoiceParameterDefinition>
+          <name>to_release</name>
+          <description>Parameter used to specify what OpenStack release to upgrade to.</description>
+          <choices class="java.util.Arrays$ArrayList">
+            <a class="string-array">
+              <string>stable/newton</string>
+              <string>master</string>
+            </a>
+          </choices>
+        </hudson.model.ChoiceParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
+    <org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+      <triggers/>
+    </org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+  </properties>
+  <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@2.23">
+    <script>#!/usr/bin/env groovy
+
+def osa, common
+String workspace_dir
+String host_ip, elasticsearch_ip
+
+// Jenkins must provide these variables as parameters or the build 
+// will fail:
+//  - from_release
+//  - to_release
+
+
+// *******************************
+stage &apos;Deployment&apos;
+// *******************************
+
+echo &apos;Deploying an All In One OpenStack using OSA&apos;
+node(&apos;master&apos;) {
+    
+    // Load the external functions using master since the git command
+    // might not be available at the agent yet
+    fileLoader.withGit(&apos;https://github.com/CasJ/openstack_one_node_ci.git&apos;, &apos;master&apos;, null, &apos;&apos;) {
+        common = fileLoader.load(&apos;common.groovy&apos;);
+        osa = fileLoader.load(&apos;osa_aio.functions.groovy&apos;);
+    }
+    
+}
+
+node(&apos;elasticsearch&apos;) {
+
+    // Get the server information
+    elasticsearch_ip = common.get_server_ip()
+
+}
+
+node(&apos;cas-agent&apos;) {
+    
+    // Wait for cloud-init to finish
+    common.wait_for_agent_setup()
+
+    // Get the workspace directory in the agent
+    workspace_dir = pwd()
+    echo &quot;The workspace directory is ${workspace_dir}&quot;
+
+    // Cleanup tests results directories if they exist to avoid causing false results
+    osa.cleanup_test_results()
+
+    // Get the agent IP
+    host_ip = common.get_server_ip()
+
+    // Deploy OpenStack
+    osa.deploy_openstack(from_release)
+
+    // Install latest version of Tempest in the host
+    osa.configure_tempest()
+
+}
+
+// *******************************
+stage &apos;Post-Deployment Validation&apos;
+// *******************************
+
+echo &apos;Running tests to validate the OpenStack deployment&apos;
+node(&apos;cas-agent&apos;) {
+   
+    // Run the smoke tests
+    osa.run_tempest_smoke_tests(&apos;before_upgrade&apos;, elasticsearch_ip, host_ip)
+
+    // Install and run the persistent resources creation
+    //osa.install_persistent_resources_tests()
+    //osa.run_persistent_resources_tests(&apos;create&apos;)
+    //osa.run_persistent_resources_tests(&apos;verify&apos;, &apos;before_upgrade&apos;)
+    
+}
+
+// *******************************
+stage &apos;Upgrade Testing Start&apos;
+// *******************************
+echo &apos;Starting tests that will run continuosly thru upgrade&apos;
+node(&apos;cas-agent&apos;) {
+    
+    //Setup during upgrade test
+    osa.install_during_upgrade_tests()
+    
+    // Setup API uptime tests
+    //osa.install_api_uptime_tests()
+
+    //Start During Upgrade Test
+    osa.start_during_test()
+  
+    // Start API uptime tests
+    //osa.start_api_uptime_tests()
+
+}
+
+// *******************************
+stage &apos;Upgrade&apos;
+// *******************************
+
+echo &quot;Upgrading OpenStack from ${from_release} to ${to_release}&quot;
+node(&apos;cas-agent&apos;) {
+
+    // Install latest version of Tempest in the host
+    //osa.rolling_upgrade(to_release)
+    echo &apos;Fake upgrade starting...&apos;
+    sleep time: 2, unit: &apos;MINUTES&apos;
+    echo &apos;Fake upgrade finished.&apos;
+
+}
+
+// *******************************
+stage &apos;Upgrade Testing Stop&apos;
+// *******************************
+echo &apos;Starting tests that will run continuosly thru upgrade&apos;
+node(&apos;cas-agent&apos;) {
+
+    //Stop During Upgrade Test
+    osa.stop_during_test()  
+
+    // Stop API uptime tests
+    //osa.stop_api_uptime_tests()  
+
+}
+
+// *******************************
+stage &apos;Post-Upgrade Validation&apos;
+// *******************************
+
+echo &apos;Validating the OpenStack deployment after the upgrade&apos;
+node(&apos;cas-agent&apos;) {
+ 
+    // Run the tempest tests
+    //osa.run_tempest_smoke_tests(&apos;after_upgrade&apos;, elasticsearch_ip, host_ip)
+
+    // Run the persistent resources validation then clean them up
+    //osa.run_persistent_resources_tests(&apos;verify&apos;, &apos;after_upgrade&apos;)
+    //osa.run_persistent_resources_tests(&apos;cleanup&apos;)    
+
+}
+
+// *******************************
+stage &apos;Reporting&apos;
+// *******************************
+
+echo &apos;Parsing the test results and submitting them to ElasticSearch&apos;
+node(&apos;cas-agent&apos;){
+    
+    // Pase persistent resource results
+    //osa.setup_parse_persistent_resources()
+    //osa.parse_persistent_resources_tests()
+
+}
+
+node(&apos;elasticsearch&apos;){
+    
+    // Installupgrade the parser in ElasticSearch 
+    osa.install_parser()
+    
+    //Pull data from the system and places it on ES vm
+    osa.aggregate_results(host_ip)
+
+    //Push data to ES
+    osa.parse_results()
+    
+}
+
+// *******************************
+stage &apos;Clean Up&apos;
+// *******************************
+
+echo &apos;Deleting the OpenStack host&apos;
+node(&apos;cas-agent&apos;) {
+
+    // There is actually nothing to be done here since Jenkins will take
+    // care of deleting the VM. This stage is left in the pipeline just
+    // for reference.
+    println &quot;The host ${host_ip} will be deleted by Jenkins in 5 minutes.&quot;
+
+}
+
+
+
+
+// ************************ Extra test functions *********************
+
+</script>
+    <sandbox>true</sandbox>
+  </definition>
+  <triggers/>
+</flow-definition>
