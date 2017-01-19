@@ -39,6 +39,7 @@
 def osa, common, bme
 String workspace_dir
 String host_ip, elasticsearch_ip
+String onmetal_ip, elasticsearch_ip, elasticsearch_pkey
 
 // Jenkins must provide these variables as parameters or the build 
 // will fail:
@@ -50,8 +51,8 @@ String host_ip, elasticsearch_ip
 stage &apos;Deployment&apos;
 // *******************************
 
-echo &apos;Deploying an All In One OpenStack using OSA&apos;
-node(&apos;master&apos;) {
+echo &apos;Load Libs&apos;
+node(&apos;bme-jenkins-slave-n01&apos;) {
     
     // Load the external functions using master since the git command
     // might not be available at the agent yet
@@ -67,6 +68,7 @@ node(&apos;elasticsearch&apos;) {
 
     // Get the server information
     elasticsearch_ip = common.get_server_ip()
+    elasticsearch_pkey = common.get_server_public_key()
 
 }
 
