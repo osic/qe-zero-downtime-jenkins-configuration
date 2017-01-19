@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <flow-definition plugin="workflow-job@2.9">
   <actions/>
-  <description>Project to test and play with an all in one deployment in a VM</description>
+  <description>Project to test and play with BME upgrade</description>
   <keepDependencies>false</keepDependencies>
   <properties>
     <hudson.model.ParametersDefinitionProperty>
@@ -36,7 +36,7 @@
   <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@2.23">
     <script>#!/usr/bin/env groovy
 
-def osa, common
+def osa, common, bme
 String workspace_dir
 String host_ip, elasticsearch_ip
 
@@ -58,6 +58,7 @@ node(&apos;master&apos;) {
     fileLoader.withGit(&apos;https://github.com/CasJ/openstack_one_node_ci.git&apos;, &apos;master&apos;, null, &apos;&apos;) {
         common = fileLoader.load(&apos;common.groovy&apos;);
         osa = fileLoader.load(&apos;osa_aio.functions.groovy&apos;);
+        bme = fileLoader.load(&apos;bme.functions.groovy&apos;);
     }
     
 }
