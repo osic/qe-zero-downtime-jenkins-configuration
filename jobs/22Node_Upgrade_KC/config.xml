@@ -33,7 +33,7 @@
           <defaultValue>false</defaultValue>
         </hudson.model.BooleanParameterDefinition>
         <hudson.model.BooleanParameterDefinition>
-          <name>deploy_openstack</name>
+          <name>redeploy_openstack</name>
           <description>Parameter used to indicate whether OpenStack should be redeployed prior to execution.</description>
           <defaultValue>false</defaultValue>
         </hudson.model.BooleanParameterDefinition>
