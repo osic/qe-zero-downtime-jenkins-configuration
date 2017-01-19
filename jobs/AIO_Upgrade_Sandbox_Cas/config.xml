@@ -72,7 +72,7 @@ node(&apos;elasticsearch&apos;) {
 node(&apos;cas-agent&apos;) {
     
     // Wait for cloud-init to finish
-    //common.wait_for_agent_setup()
+    common.wait_for_agent_setup()
 
     // Get the workspace directory in the agent
     workspace_dir = pwd()
@@ -100,7 +100,7 @@ echo &apos;Running tests to validate the OpenStack deployment&apos;
 node(&apos;cas-agent&apos;) {
    
     // Run the smoke tests
-    //osa.run_tempest_smoke_tests(&apos;before_upgrade&apos;, elasticsearch_ip, host_ip)
+    osa.run_tempest_smoke_tests(&apos;before_upgrade&apos;, elasticsearch_ip, host_ip)
 
     // Install and run the persistent resources creation
     //osa.install_persistent_resources_tests()
