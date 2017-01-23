@@ -1,6 +1,8 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <flow-definition plugin="workflow-job@2.9">
-  <description></description>
+  <description>Used to start to finish (assuming no errors) install OpenStack Ansible, run tests, upgrade via OSA upgrade script to ${to_release}, run tests, parse and report results.&#xd;
+&#xd;
+Default parameters assume upgrade from stable/mitaka to stable/newton with full rebuild and redeploy of all nodes in environment.</description>
   <keepDependencies>false</keepDependencies>
   <properties>
     <jenkins.model.BuildDiscarderProperty>
@@ -11,6 +13,32 @@
         <artifactNumToKeep>-1</artifactNumToKeep>
       </strategy>
     </jenkins.model.BuildDiscarderProperty>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.StringParameterDefinition>
+          <name>to_release</name>
+          <description>Version of Openstack to upgrade to</description>
+          <defaultValue>stable/newton</defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.BooleanParameterDefinition>
+          <name>rebuild_environment</name>
+          <description>Used to rebuild environment from clean image. Defaults to True.</description>
+          <defaultValue>true</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
+        <hudson.model.BooleanParameterDefinition>
+          <name>redeploy_openstack</name>
+          <description>Redeploys OpenStack. Defaults to True.</description>
+          <defaultValue>true</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>controller_name</name>
+          <description>Specifies controller node to be used to install/run tests on utility container. Default is &apos;controller01&apos;, which would result in all tests to be installed, configured, and run from the LXC container of &apos;controller01_utility_container&apos; on controller01.
+
+Should be left at default unless rerunning tests by installing/configuring tests for existing environment through installing on different controller.</description>
+          <defaultValue>controller01</defaultValue>
+        </hudson.model.StringParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
     <org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
       <triggers/>
     </org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
