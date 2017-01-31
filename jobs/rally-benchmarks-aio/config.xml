@@ -21,7 +21,7 @@ node(&apos;josh-aio-ansible-temp&apos;) {
       ssh -o StrictHostKeyChecking=no root@localhost &apos;&apos;&apos;
       touch /root/
       cd
-      git clone https://github.com/openstack/rally.git
+      sudo git clone https://github.com/openstack/rally.git
       ./install-rally.sh
       &apos;&apos;&apos;
     &quot;&quot;&quot;
