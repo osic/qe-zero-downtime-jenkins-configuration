@@ -18,7 +18,7 @@ stage &apos;Pre-Deployment&apos;
 echo &apos;Provisioning an onMetal server and preparing it to run OSA&apos;
 node(&apos;josh-aio-ansible-temp&apos;) {
     sh &quot;&quot;&quot;
-        touch test.txt
+        touch /home/ubuntu/test.txt
     &quot;&quot;&quot;
 }</script>
     <sandbox>true</sandbox>
