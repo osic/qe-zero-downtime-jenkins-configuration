@@ -34,9 +34,7 @@
       </views>
     </hudson.model.MyViewsProperty>
     <hudson.model.PaneStatusProperties>
-      <collapsed>
-        <string>buildHistory</string>
-      </collapsed>
+      <collapsed/>
     </hudson.model.PaneStatusProperties>
     <hudson.security.HudsonPrivateSecurityRealm_-Details>
       <passwordHash>#jbcrypt:$2a$10$t3Z9M98csK75ZxNlSky/IeeYlpQpVWKYJtLCGRGTB9niRIEwNfKGy</passwordHash>
