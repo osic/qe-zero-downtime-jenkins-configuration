@@ -1,5 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <flow-definition plugin="workflow-job@2.9">
+  <actions/>
   <description></description>
   <keepDependencies>false</keepDependencies>
   <properties>
@@ -9,12 +10,6 @@
   </properties>
   <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@2.23">
     <script>#!/usr/bin/env groovy
-
-def osa, common
-String workspace_dir 
-String onmetal_ip
-String datacenter = &apos;dfw&apos;
-
 
 // *******************************
 stage &apos;Pre-Deployment&apos;
