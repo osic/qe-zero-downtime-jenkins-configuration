@@ -24,7 +24,8 @@ node(&apos;josh-aio-ansible-temp&apos;) {
     sh &quot;&quot;&quot;
     ssh -o StrictHostKeyChecking=no root@${localhost} &apos;&apos;&apos;
     touch /root/
-    git clone https://github.com/openstack/rally.git
+    cd
+    sudo git clone https://github.com/openstack/rally.git
     ./install-rally.sh
     &apos;&apos;&apos;
     &quot;&quot;&quot;
@@ -41,7 +42,7 @@ node(&apos;josh-aio-ansible-temp&apos;) {
     cd
     source openrc
     rally deployment create —fromenv —name=existing
-    git clone https://github.com/jwatford/rally-scenarios.git
+    sudo git clone https://github.com/jwatford/rally-scenarios.git
     cd rally_scenarios/
     rally task start osic-keystone-prime-scenario.json --task-args-file args.yaml
     rally task start osic-nova-1-server-scenario.json --task-args-file args.yaml
