@@ -18,12 +18,12 @@ stage &apos;Install Rally&apos;
 echo &apos;Provisioning an onMetal server and preparing it to run OSA&apos;
 node(&apos;josh-aio-ansible-temp&apos;) {
     sh &quot;&quot;&quot;
-      ssh -o StrictHostKeyChecking=no ubuntu@10.0.0.142 &apos;&apos;&apos;
-        sudo touch /root/
+      ssh -o StrictHostKeyChecking=no root@10.0.0.142 &apos;&apos;&apos;
+        touch /root/
         cd
-        sudo git clone https://github.com/openstack/rally.git
+        git clone https://github.com/openstack/rally.git
         cd rally
-        sudo ./install-rally.sh
+        ./install-rally.sh
       &apos;&apos;&apos;
     &quot;&quot;&quot;
 }</script>
