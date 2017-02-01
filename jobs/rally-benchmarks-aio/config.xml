@@ -19,9 +19,7 @@ echo &apos;Provisioning an onMetal server and preparing it to run OSA&apos;
 node(&apos;josh-aio-ansible-temp&apos;) {
     sh &quot;&quot;&quot;
       cd
-      sudo git clone https://github.com/openstack/rally.git
-      cd rally/
-      sudo ./install_rally.sh
+      sudo rm -R rally/
     &quot;&quot;&quot;
 }
 
