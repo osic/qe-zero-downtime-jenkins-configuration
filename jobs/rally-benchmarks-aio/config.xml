@@ -43,7 +43,6 @@ echo &apos;Provisioning an onMetal server and preparing it to run OSA&apos;
 node(&apos;josh-aio-ansible-temp&apos;) {
   sh &quot;&quot;&quot;
       cd
-      . /home/rally/rally/bin/activate
       source openrc
       rally-manage db upgrade
       rally-manage db recreate
