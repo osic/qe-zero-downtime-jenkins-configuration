@@ -45,6 +45,9 @@ node(&apos;josh-aio-ansible-temp&apos;) {
       cd
       source openrc
       rally-manage db create
+      rally-manage db upgrade
+      rally-manage db revision
+      rally-manage db recreate
       rally deployment create --fromenv --name=existing
       sudo git clone https://github.com/jwatford/rally-scenarios.git
       cd rally_scenarios/
