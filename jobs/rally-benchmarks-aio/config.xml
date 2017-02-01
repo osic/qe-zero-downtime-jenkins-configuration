@@ -42,7 +42,8 @@ stage &apos;Run Prime Jobs&apos;
 echo &apos;Provisioning an onMetal server and preparing it to run OSA&apos;
 node(&apos;josh-aio-ansible-temp&apos;) {
   sh &quot;&quot;&quot;
-      cd
+      sudo su
+      cd /root
       source openrc
       
   &quot;&quot;&quot;
@@ -57,7 +58,7 @@ node(&apos;josh-aio-ansible-temp&apos;) {
     sh &quot;&quot;&quot;
         sudo su
         cd
-        source openrc
+        cd rally-scenarios/
         rally deployment use --deployment existing
         rally task start benchmark.json --task-args-file args.yaml
         rally task report --junit --out results.xml
