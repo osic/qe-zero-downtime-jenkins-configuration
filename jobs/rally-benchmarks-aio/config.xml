@@ -43,9 +43,8 @@ echo &apos;Provisioning an onMetal server and preparing it to run OSA&apos;
 node(&apos;josh-aio-ansible-temp&apos;) {
   sh &quot;&quot;&quot;
       sudo su
-      cd /
-      ls -a
-      source /root/openrc
+      cd /root/
+      source openrc
       rally deployment create —fromenv —name=existing
       git clone https://github.com/jwatford/rally-scenarios.git
       cd rally_scenarios/
