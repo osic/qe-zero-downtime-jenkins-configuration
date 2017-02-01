@@ -30,9 +30,9 @@ echo &apos;Provisioning an onMetal server and preparing it to run OSA&apos;
 node(&apos;josh-aio-ansible-temp&apos;) {
     sh &quot;&quot;&quot;
       cd
-      git clone https://github.com/openstack/rally.git
+      sudo git clone https://github.com/openstack/rally.git
       cd rally/
-      ./install_rally.sh
+      sudo ./install_rally.sh
     &quot;&quot;&quot;
 }
 
