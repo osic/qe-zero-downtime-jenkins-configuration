@@ -18,7 +18,7 @@ echo &apos;Provisioning an onMetal server and preparing it to run OSA&apos;
 node(&apos;josh-aio-ansible-temp&apos;) {
     sh &quot;&quot;&quot;
       cd
-      sudo rm -R rally/
+      rm -R rally/
     &quot;&quot;&quot;
 }
 
@@ -30,9 +30,9 @@ echo &apos;Provisioning an onMetal server and preparing it to run OSA&apos;
 node(&apos;josh-aio-ansible-temp&apos;) {
     sh &quot;&quot;&quot;
       cd
-      sudo git clone https://github.com/openstack/rally.git
+      git clone https://github.com/openstack/rally.git
       cd rally/
-      sudo ./install_rally.sh
+      ./install_rally.sh
     &quot;&quot;&quot;
 }
 
@@ -42,8 +42,7 @@ stage &apos;Run Prime Jobs&apos;
 echo &apos;Provisioning an onMetal server and preparing it to run OSA&apos;
 node(&apos;josh-aio-ansible-temp&apos;) {
   sh &quot;&quot;&quot;
-      sudo su
-      cd /root/
+      cd /
       source openrc
       rally deployment create —fromenv —name=existing
       git clone https://github.com/jwatford/rally-scenarios.git
@@ -61,7 +60,6 @@ stage &apos;Run Benchmarks&apos;
 echo &apos;Provisioning an onMetal server and preparing it to run OSA&apos;
 node(&apos;josh-aio-ansible-temp&apos;) {
     sh &quot;&quot;&quot;
-        sudo su
         cd
         cd rally-scenarios/
         rally deployment use --deployment existing
