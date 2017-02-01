@@ -44,7 +44,7 @@ node(&apos;josh-aio-ansible-temp&apos;) {
   sh &quot;&quot;&quot;
       cd
       ls -a
-      rally deployment create —filename os.cnf —name=temp
+      rally deployment create —filename=os.cnf —name=temp
       git clone https://github.com/jwatford/rally-scenarios.git
       cd rally_scenarios/
       rally task start osic-keystone-prime-scenario.json --task-args-file args.yaml
