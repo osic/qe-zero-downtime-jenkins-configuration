@@ -17,8 +17,7 @@ stage &apos;Remove Rally&apos;
 echo &apos;Provisioning an onMetal server and preparing it to run OSA&apos;
 node(&apos;josh-aio-ansible-temp&apos;) {
     sh &quot;&quot;&quot;
-      cd
-      rm -R rally/
+      pwd
     &quot;&quot;&quot;
 }
 
