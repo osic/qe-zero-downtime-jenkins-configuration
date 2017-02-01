@@ -18,8 +18,9 @@ stage &apos;Install Rally&apos;
 echo &apos;Provisioning an onMetal server and preparing it to run OSA&apos;
 node(&apos;josh-aio-ansible-temp&apos;) {
     sh &quot;&quot;&quot;
-        sudo su
-        whoami
+        cd
+        sudo git clone https://github.com/openstack/rally.git
+        sudo ./install_rally.sh
     &quot;&quot;&quot;
 }</script>
     <sandbox>true</sandbox>
