@@ -45,7 +45,7 @@ node(&apos;josh-aio-ansible-temp&apos;) {
       sudo su
       cd /
       ls -a
-      cd /root/
+      sudo cd /root/
       ls -a
       source openrc
       rally deployment create —fromenv —name=existing
