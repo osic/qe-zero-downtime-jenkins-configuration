@@ -44,6 +44,7 @@ node(&apos;josh-aio-ansible-temp&apos;) {
   sh &quot;&quot;&quot;
       cd
       source openrc
+      rally-manage db revision
       rally-manage db recreate
       rally-manage db upgrade
       rally-manage db create
