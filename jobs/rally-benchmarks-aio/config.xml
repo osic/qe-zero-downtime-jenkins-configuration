@@ -72,7 +72,7 @@ node(&apos;josh-aio-ansible-temp&apos;) {
     rally deployment use --deployment existing
     cd
     cd rally/rally-scenarios/
-    rally task start benchmark.json --task-args-file args.yaml &gt; rally-console.out 2&gt;&amp;1
+    rally task start benchmark.json --task-args-file args.yaml
     rally task report --junit --out results.xml
     rally task report --html-static --out results.html
     rally task results &gt; results.json
