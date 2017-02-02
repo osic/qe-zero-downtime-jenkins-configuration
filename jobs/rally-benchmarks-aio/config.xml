@@ -41,7 +41,7 @@ echo &apos;Provisioning an onMetal server and preparing it to run OSA&apos;
 node(&apos;josh-aio-ansible-temp&apos;) {
   sh &quot;&quot;&quot;
 
-      cd /rally
+      cd rally/
       sudo git clone https://github.com/jwatford/rally-scenarios.git
       cd
       . /home/ubuntu/rally/bin/activate
