@@ -40,14 +40,16 @@ stage &apos;Run Prime Jobs&apos;
 echo &apos;Provisioning an onMetal server and preparing it to run OSA&apos;
 node(&apos;josh-aio-ansible-temp&apos;) {
   sh &quot;&quot;&quot;
-      . /home/ubuntu/rally/bin/activate
+
+      cd /rally
+      sudo git clone https://github.com/jwatford/rally-scenarios.git
       cd
+      . /home/ubuntu/rally/bin/activate
       source openrc
       rally-manage db recreate
       rally deployment create --fromenv --name=existing
       rally deployment use --deployment existing
-      sudo git clone https://github.com/jwatford/rally-scenarios.git
-      cd rally_scenarios/
+      cd rally/rally_scenarios/
       rally task start osic-keystone-prime-scenario.json --task-args-file args.yaml
       rally task start osic-nova-1-server-scenario.json --task-args-file args.yaml
       
