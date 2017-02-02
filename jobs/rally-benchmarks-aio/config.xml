@@ -29,8 +29,8 @@ stage &apos;Install Rally&apos;
 echo &apos;Provisioning an onMetal server and preparing it to run OSA&apos;
 node(&apos;josh-aio-ansible-temp&apos;) {
     sh &quot;&quot;&quot;
-      cd
-      sudo wget -q -O- https://raw.githubusercontent.com/openstack/rally/master/install_rally.sh | bash
+    cd
+    sudo wget -q -O- https://raw.githubusercontent.com/openstack/rally/master/install_rally.sh | bash
     &quot;&quot;&quot;
 }
 
@@ -40,18 +40,18 @@ stage &apos;Run Prime Jobs&apos;
 echo &apos;Provisioning an onMetal server and preparing it to run OSA&apos;
 node(&apos;josh-aio-ansible-temp&apos;) {
   sh &quot;&quot;&quot;
-
-      cd rally/
-      sudo git clone https://github.com/jwatford/rally-scenarios.git
-      cd
-      . /home/ubuntu/rally/bin/activate
-      source openrc
-      rally-manage db recreate
-      rally deployment create --fromenv --name=existing
-      rally deployment use --deployment existing
-      cd rally/rally_scenarios/
-      rally task start osic-keystone-prime-scenario.json --task-args-file args.yaml
-      rally task start osic-nova-1-server-scenario.json --task-args-file args.yaml
+    cd
+    cd rally/
+    sudo git clone https://github.com/jwatford/rally-scenarios.git
+    cd
+    . /home/ubuntu/rally/bin/activate
+    source openrc
+    rally-manage db recreate
+    rally deployment create --fromenv --name=existing
+    rally deployment use --deployment existing
+    cd rally/rally_scenarios/
+    rally task start osic-keystone-prime-scenario.json --task-args-file args.yaml
+    rally task start osic-nova-1-server-scenario.json --task-args-file args.yaml
       
   &quot;&quot;&quot;
 }
@@ -63,13 +63,13 @@ stage &apos;Run Benchmarks&apos;
 echo &apos;Provisioning an onMetal server and preparing it to run OSA&apos;
 node(&apos;josh-aio-ansible-temp&apos;) {
     sh &quot;&quot;&quot;
-        cd 
-        cd rally/rally-scenarios/
-        rally deployment use --deployment existing
-        rally task start benchmark.json --task-args-file args.yaml
-        rally task report --junit --out results.xml
-        rally task report --html-static --out results.html
-        rally task results  &gt; results.json
+    cd 
+    cd rally/rally-scenarios/
+    rally deployment use --deployment existing
+    rally task start benchmark.json --task-args-file args.yaml
+    rally task report --junit --out results.xml
+    rally task report --html-static --out results.html
+    rally task results  &gt; results.json
     &quot;&quot;&quot;
 }</script>
     <sandbox>true</sandbox>
