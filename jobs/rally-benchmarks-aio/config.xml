@@ -74,6 +74,7 @@ node(&apos;josh-aio-ansible-temp&apos;) {
     cd rally/rally-scenarios/
     rally task start benchmark.json --task-args-file args.yaml
     rally task results &gt; results.json
+    sudo rally task results &gt; results.json
     &quot;&quot;&quot;
 }</script>
     <sandbox>true</sandbox>
