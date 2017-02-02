@@ -45,9 +45,6 @@ node(&apos;josh-aio-ansible-temp&apos;) {
       cd
       source openrc
       rally-manage db upgrade
-      python my_repository/manage.py db_version sqlite:///project.db
-      python manage.py upgrade
-      python manage.py db_version
       rally-manage db create
       rally deployment create --fromenv --name=existing
       sudo git clone https://github.com/jwatford/rally-scenarios.git
