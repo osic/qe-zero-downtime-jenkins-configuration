@@ -18,6 +18,7 @@ echo &apos;Provisioning an onMetal server and preparing it to run OSA&apos;
 node(&apos;josh-aio-ansible-temp&apos;) {
     sh &quot;&quot;&quot;
     cd
+    sudo rm -R rally/
     sudo wget -q -O- https://raw.githubusercontent.com/openstack/rally/master/install_rally.sh | bash
     &quot;&quot;&quot;
 }
