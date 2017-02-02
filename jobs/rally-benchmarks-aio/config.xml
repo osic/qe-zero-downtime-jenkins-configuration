@@ -64,6 +64,14 @@ stage &apos;Run Benchmarks&apos;
 echo &apos;Provisioning an onMetal server and preparing it to run OSA&apos;
 node(&apos;josh-aio-ansible-temp&apos;) {
     sh &quot;&quot;&quot;
+    cd
+    . /home/ubuntu/rally/bin/activate
+    source openrc
+    rally-manage db recreate
+    rally deployment create --fromenv --name=existing
+    rally deployment use --deployment existing
+    cd
+    cd rally/rally-scenarios/
     rally task start benchmark.json --task-args-file args.yaml
     rally task report --junit --out results.xml
     rally task report --html-static --out results.html
