@@ -75,8 +75,6 @@ node(&apos;josh-aio-ansible-temp&apos;) {
     rally task start benchmark.json --task-args-file args.yaml
     rally task results &gt; ~/rally/results.json
     deactivate
-    rally task report --junit ~/rally/results.xml
-    rally task report --html-static  ~/rally/results.html
     &quot;&quot;&quot;
 }</script>
     <sandbox>true</sandbox>
