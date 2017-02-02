@@ -49,7 +49,8 @@ node(&apos;josh-aio-ansible-temp&apos;) {
     rally-manage db recreate
     rally deployment create --fromenv --name=existing
     rally deployment use --deployment existing
-    cd rally/rally_scenarios/
+    cd
+    cd rally/rally-scenarios/
     rally task start osic-keystone-prime-scenario.json --task-args-file args.yaml
     rally task start osic-nova-1-server-scenario.json --task-args-file args.yaml
       
