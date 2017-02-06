@@ -1,5 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <flow-definition plugin="workflow-job@2.9">
+  <actions/>
   <description>Used to start to finish (assuming no errors) install OpenStack Ansible, run tests, upgrade via OSA upgrade script to ${to_release}, run tests, parse and report results.&#xd;
 &#xd;
 Default parameters assume upgrade from stable/mitaka to stable/newton with full rebuild and redeploy of all nodes in environment.</description>
@@ -48,7 +49,7 @@ Should be left at default unless rerunning tests by installing/configuring tests
       <configVersion>2</configVersion>
       <userRemoteConfigs>
         <hudson.plugins.git.UserRemoteConfig>
-          <url>https://github.com/dankolbrs/qa-jenkins-onmetal.git</url>
+          <url>https://github.com/osic/qe-jenkins-baremetal</url>
         </hudson.plugins.git.UserRemoteConfig>
       </userRemoteConfigs>
       <branches>
