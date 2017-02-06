@@ -135,6 +135,7 @@
         <string>all_in_one_sandbox</string>
         <string>All_In_One_VM</string>
         <string>All_In_One_VM (KC Sandbox)</string>
+        <string>benchmark</string>
         <string>luz_sandbox</string>
         <string>test_bme_vpn_connection</string>
       </jobNames>
