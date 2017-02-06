@@ -36,7 +36,7 @@ Default parameters assume upgrade from stable/mitaka to stable/newton with full 
           <description>Specifies controller node to be used to install/run tests on utility container. Default is &apos;controller01&apos;, which would result in all tests to be installed, configured, and run from the LXC container of &apos;controller01_utility_container&apos; on controller01.
 
 Should be left at default unless rerunning tests by installing/configuring tests for existing environment through installing on different controller.</description>
-          <defaultValue>controller01</defaultValue>
+          <defaultValue>infra01</defaultValue>
         </hudson.model.StringParameterDefinition>
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
