@@ -84,11 +84,8 @@ node(&apos;agent-xl&apos;) {
     // Get the agent IP
     host_ip = common.get_server_ip()
 
-    // Deploy OpenStack
-    osa.deploy_openstack(from_release)
-
     // Install latest version of Tempest in the host
-    osa.configure_tempest()
+    //osa.configure_tempest()
 
     //Install rally for benchmarks
     osa.install_rally()
@@ -103,11 +100,11 @@ echo &apos;Running tests to validate the OpenStack deployment&apos;
 node(&apos;agent-xl&apos;) {
    
     // Run the smoke tests
-    osa.run_tempest_smoke_tests(&apos;before_upgrade&apos;, elasticsearch_ip, host_ip)
+    // osa.run_tempest_smoke_tests(&apos;before_upgrade&apos;, elasticsearch_ip, host_ip)
 
     // Run Rally Benchmarks
     osa.prime_rally_benchmarks()
-    osa.run_rally_benchmarks()
+    osa.run_rally_benchmarks(&apos;before_upgrade&apos;, elasticsearch_ip, host_ip)
 
     // Install and run the persistent resources creation
     //osa.install_persistent_resources_tests()
@@ -117,51 +114,17 @@ node(&apos;agent-xl&apos;) {
 }
 
 // *******************************
-stage &apos;Upgrade Testing Start&apos;
-// *******************************
-echo &apos;Starting tests that will run continuosly thru upgrade&apos;
-node(&apos;agent-xl&apos;) {
-    
-    //Setup during upgrade test
-    osa.install_during_upgrade_tests()
-    
-    // Setup API uptime tests
-    //osa.install_api_uptime_tests()
-
-    //Start During Upgrade Test
-    osa.start_during_test()
-  
-    // Start API uptime tests
-    //osa.start_api_uptime_tests()
-
-}
-
-// *******************************
 stage &apos;Upgrade&apos;
 // *******************************
 
 echo &quot;Upgrading OpenStack from ${from_release} to ${to_release}&quot;
-node(‘agent-xl’) {
+node(&apos;agent-xl&apos;) {
 
     // Install latest version of Tempest in the host
     //osa.rolling_upgrade(to_release)
     echo &apos;Fake upgrade starting...&apos;
     sleep time: 2, unit: &apos;MINUTES&apos;
     echo &apos;Fake upgrade finished.&apos;
-
-}
-
-// *******************************
-stage &apos;Upgrade Testing Stop&apos;
-// *******************************
-echo &apos;Starting tests that will run continuosly thru upgrade&apos;
-node(&apos;agent-xl&apos;) {
-
-    //Stop During Upgrade Test
-    osa.stop_during_test()  
-
-    // Stop API uptime tests
-    //osa.stop_api_uptime_tests()  
 
 }
 
@@ -177,7 +140,7 @@ node(&apos;agent-xl&apos;) {
 
     // Run Rally Benchmarks
     osa.prime_rally_benchmarks()
-    osa.run_rally_benchmarks()
+    osa.run_rally_benchmarks(‘After_upgrade&apos;, elasticsearch_ip, host_ip)
 
     // Run the persistent resources validation then clean them up
     //osa.run_persistent_resources_tests(&apos;verify&apos;, &apos;after_upgrade&apos;)
@@ -224,11 +187,6 @@ node(&apos;agent-xl&apos;) {
     println &quot;The host ${host_ip} will be deleted by Jenkins in 5 minutes.&quot;
 
 }
-
-
-
-
-// ************************ Extra test functions *********************
 
 </script>
     <sandbox>true</sandbox>
