@@ -56,8 +56,8 @@ node(&apos;master&apos;) {
     // Load the external functions using master since the git command
     // might not be available at the agent yet
     fileLoader.withGit(&apos;https://github.com/jwatford/openstack_one_node_ci.git&apos;, &apos;master&apos;, null, &apos;&apos;) {
-        common = fileLoader.load(&apos;common.groovy&apos;);
-        osa = fileLoader.load(&apos;osa_aio.functions.groovy&apos;);
+    common = fileLoader.load(&apos;common.groovy&apos;);
+    osa = fileLoader.load(&apos;osa_aio.functions.groovy&apos;);
     }
     
 }
@@ -69,7 +69,7 @@ node(&apos;elasticsearch&apos;) {
 
 }
 
-node(‘agent-xl’) {
+node(&apos;agent-xl&apos;) {
     
     // Wait for cloud-init to finish
     common.wait_for_agent_setup()
@@ -100,7 +100,7 @@ stage &apos;Post-Deployment Validation&apos;
 // *******************************
 
 echo &apos;Running tests to validate the OpenStack deployment&apos;
-node(‘agent-xl’) {
+node(&apos;agent-xl&apos;) {
    
     // Run the smoke tests
     osa.run_tempest_smoke_tests(&apos;before_upgrade&apos;, elasticsearch_ip, host_ip)
@@ -120,7 +120,7 @@ node(‘agent-xl’) {
 stage &apos;Upgrade Testing Start&apos;
 // *******************************
 echo &apos;Starting tests that will run continuosly thru upgrade&apos;
-node(‘agent-xl’) {
+node(&apos;agent-xl&apos;) {
     
     //Setup during upgrade test
     osa.install_during_upgrade_tests()
@@ -155,7 +155,7 @@ node(‘agent-xl’) {
 stage &apos;Upgrade Testing Stop&apos;
 // *******************************
 echo &apos;Starting tests that will run continuosly thru upgrade&apos;
-node(‘agent-xl’) {
+node(&apos;agent-xl&apos;) {
 
     //Stop During Upgrade Test
     osa.stop_during_test()  
@@ -170,7 +170,7 @@ stage &apos;Post-Upgrade Validation&apos;
 // *******************************
 
 echo &apos;Validating the OpenStack deployment after the upgrade&apos;
-node(‘agent-xl’) {
+node(&apos;agent-xl&apos;) {
  
     // Run the tempest tests
     //osa.run_tempest_smoke_tests(&apos;after_upgrade&apos;, elasticsearch_ip, host_ip)
@@ -190,7 +190,7 @@ stage &apos;Reporting&apos;
 // *******************************
 
 echo &apos;Parsing the test results and submitting them to ElasticSearch&apos;
-node(‘agent-xl’) {
+node(&apos;agent-xl&apos;) {
     
     // Pase persistent resource results
     //osa.setup_parse_persistent_resources()
@@ -216,7 +216,7 @@ stage &apos;Clean Up&apos;
 // *******************************
 
 echo &apos;Deleting the OpenStack host&apos;
-node(‘agent-xl’) {
+node(&apos;agent-xl&apos;) {
 
     // There is actually nothing to be done here since Jenkins will take
     // care of deleting the VM. This stage is left in the pipeline just
