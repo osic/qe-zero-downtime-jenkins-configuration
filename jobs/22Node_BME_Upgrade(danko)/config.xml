@@ -26,11 +26,6 @@ Default parameters assume upgrade from stable/mitaka to stable/newton with full 
           <description>Used to rebuild environment from clean image. Defaults to True.</description>
           <defaultValue>true</defaultValue>
         </hudson.model.BooleanParameterDefinition>
-        <hudson.model.BooleanParameterDefinition>
-          <name>redeploy_openstack</name>
-          <description>Redeploys OpenStack. Defaults to True.</description>
-          <defaultValue>true</defaultValue>
-        </hudson.model.BooleanParameterDefinition>
         <hudson.model.StringParameterDefinition>
           <name>controller_name</name>
           <description>Specifies controller node to be used to install/run tests on utility container. Default is &apos;controller01&apos;, which would result in all tests to be installed, configured, and run from the LXC container of &apos;controller01_utility_container&apos; on controller01.
