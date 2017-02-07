@@ -106,6 +106,7 @@ node(&apos;josh-aio-ansible-temp&apos;) {
     // Run Rally Benchmarks
     osa.prime_rally_benchmarks()
     osa.run_rally_benchmarks(&apos;before_upgrade&apos;, elasticsearch_ip, host_ip)
+    osa.parse_benchmarks(&apos;before_upgrade&apos;, elasticsearch_ip, host_ip)
 
     // Install and run the persistent resources creation
     //osa.install_persistent_resources_tests()
@@ -141,7 +142,9 @@ node(&apos;josh-aio-ansible-temp&apos;) {
 
     // Run Rally Benchmarks
     osa.prime_rally_benchmarks()
-    osa.run_rally_benchmarks(&apos;After_upgrade&apos;, elasticsearch_ip, host_ip)
+    osa.run_rally_benchmarks(&apos;after_upgrade&apos;, elasticsearch_ip, host_ip)
+    osa.parse_benchmarks(&apos;after_upgrade&apos;, elasticsearch_ip, host_ip)
+
 
     // Run the persistent resources validation then clean them up
     //osa.run_persistent_resources_tests(&apos;verify&apos;, &apos;after_upgrade&apos;)
