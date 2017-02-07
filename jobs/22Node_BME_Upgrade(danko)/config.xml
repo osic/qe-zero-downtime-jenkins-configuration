@@ -24,7 +24,7 @@ Default parameters assume upgrade from stable/mitaka to stable/newton with full 
         <hudson.model.BooleanParameterDefinition>
           <name>rebuild_environment</name>
           <description>Used to rebuild environment from clean image. Defaults to True.</description>
-          <defaultValue>true</defaultValue>
+          <defaultValue>false</defaultValue>
         </hudson.model.BooleanParameterDefinition>
         <hudson.model.StringParameterDefinition>
           <name>controller_name</name>
