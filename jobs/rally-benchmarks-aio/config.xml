@@ -139,7 +139,7 @@ node(&apos;josh-aio-ansible-temp&apos;) {
 
     // Run Rally Benchmarks
     osa.prime_rally_benchmarks()
-    osa.run_rally_benchmarks(&apos;after_upgrade&apos;)
+    osa.run_rally_benchmarks(&apos;before_upgrade&apos;)
 
 
     // Run the persistent resources validation then clean them up
@@ -171,8 +171,8 @@ node(&apos;elasticsearch&apos;){
     osa.parse_results()
     
     //Parse benchmarks
-    //osa.parse_benchmarks(&apos;before_upgrade&apos;)
-    osa.parse_benchmarks(&apos;after_upgrade&apos;)
+    osa.parse_benchmarks(&apos;before_upgrade&apos;)
+    //osa.parse_benchmarks(&apos;after_upgrade&apos;)
 }
 
 // *******************************
