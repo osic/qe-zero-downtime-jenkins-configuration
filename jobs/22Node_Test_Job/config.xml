@@ -54,6 +54,7 @@ stage(&apos;Pre-Deployment -- Configure Network on Jenkins Build Node&apos;){
 
 node(&apos;bme-jenkins-slave-n01&apos;){
     stage(&apos;test&apos;){
+        bme.setup_ssh_pub_key()
         bme.configure_tempest(&quot;infra02&quot;)
     }
 }
