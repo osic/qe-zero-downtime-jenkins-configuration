@@ -70,7 +70,7 @@ stage(&apos;Pre-Deployment -- Configure Network on Jenkins Build Node&apos;){
 
 node(&apos;bme-jenkins-slave-n01&apos;){
     stage(&apos;test&apos;){
-        echo &quot;hello&quot;
+        bme.start_during_upgrade_test(&quot;infra01&quot;)
     }
 }
 </script>
