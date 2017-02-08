@@ -1,6 +1,64 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <flow-definition plugin="workflow-job@2.9">
+  <description>Used to run pipeline tests</description>
   <keepDependencies>false</keepDependencies>
-  <properties/>
+  <properties>
+    <org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+      <triggers/>
+    </org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+  </properties>
+  <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@2.23">
+    <script>def osa, common, bme
+String workspace_dir
+String onmetal_ip, elasticsearch_ip, elasticsearch_pkey
+
+// *******************************
+stage(&apos;Pre-Deployment -- Load Libs&apos;){
+// *******************************
+    node(&apos;bme-jenkins-slave-n01&apos;) {
+        // Load the external functions using master since the git command
+        // might not be available at the agent yet
+        fileLoader.withGit(&apos;https://github.com/osic/qe-jenkins-baremetal.git&apos;, &apos;master&apos;, null, &apos;&apos;) {
+            common = fileLoader.load(&apos;jenkins/common.groovy&apos;);
+            osa = fileLoader.load(&apos;jenkins/osa_onmetal.functions.groovy&apos;);
+            bme = fileLoader.load(&apos;jenkins/bme.functions.groovy&apos;);
+        }
+        git &apos;https://github.com/osic/qe-jenkins-baremetal.git&apos;
+    }
+
+    node(&apos;elasticsearch&apos;) {
+        echo &apos;Get the server information&apos;
+        elasticsearch_ip = common.get_server_ip()
+        elasticsearch_pkey = common.get_server_public_key()
+    }
+}
+
+stage(&apos;Pre-Deployment -- Configure Network on Jenkins Build Node&apos;){
+    node(&apos;bme-jenkins-slave-n01&apos;) {
+        withCredentials([[$class: &apos;UsernamePasswordMultiBinding&apos;, credentialsId: &apos;b4df0136-d403-4e1c-a62b-10d751505d77&apos;,
+        usernameVariable: &apos;CLOUD_USER&apos;, passwordVariable: &apos;CLOUD_PASS&apos;]]) {
+            bme.connect_vpn(&quot;72.32.87.87&quot;, &quot;${CLOUD_USER}&quot;, &quot;${CLOUD_PASS}&quot;)
+
+            echo &apos;Configure ansible hosts file for SSH&apos;
+            sh &quot;&quot;&quot;
+                echo &quot;[deploy_node]&quot; &gt; hosts
+                echo &quot;intelci-node ansible_ssh_host=172.24.0.21 ansible_ssh_user=root&quot; &gt;&gt; hosts
+            &quot;&quot;&quot;
+
+        }
+    }
+}
+
+
+
+node(&apos;bme-jenkins-slave-n01&apos;){
+    stage(&apos;test&apos;){
+        bme.setup_ssh_pub_key()
+        bme.install_tempest_tests(&quot;infra02&quot;)
+    }
+}
+</script>
+    <sandbox>true</sandbox>
+  </definition>
   <triggers/>
 </flow-definition>
