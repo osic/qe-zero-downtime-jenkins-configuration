@@ -88,7 +88,6 @@ node(&apos;josh-aio-ansible-temp&apos;) {
     //osa.configure_tempest()
 
     //Install rally for benchmarks
-    
     osa.install_rally()
 
 }
@@ -106,7 +105,6 @@ node(&apos;josh-aio-ansible-temp&apos;) {
     // Run Rally Benchmarks
     osa.prime_rally_benchmarks()
     osa.run_rally_benchmarks(&apos;before_upgrade&apos;, elasticsearch_ip, host_ip)
-    osa.parse_benchmarks(&apos;before_upgrade&apos;, elasticsearch_ip, host_ip)
 
     // Install and run the persistent resources creation
     //osa.install_persistent_resources_tests()
@@ -174,11 +172,10 @@ node(&apos;elasticsearch&apos;){
 
     //Push data to ES
     osa.parse_results()
-
-    //Parse benchmarks
-    osa.parse_benchmarks(&apos;before_upgrade&apos;, elasticsearch_ip)
-    osa.parse_benchmarks(&apos;after_upgrade&apos;, elasticsearch_ip)
     
+    //Parse benchmarks
+    osa.parse_benchmarks(&apos;before_upgrade&apos;, elasticsearch_ip, host_ip)
+    osa.parse_benchmarks(&apos;after_upgrade&apos;, elasticsearch_ip, host_ip)
 }
 
 // *******************************
