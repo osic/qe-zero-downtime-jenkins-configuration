@@ -1,5 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <flow-definition plugin="workflow-job@2.9">
+  <actions/>
   <description>Used to run pipeline tests</description>
   <keepDependencies>false</keepDependencies>
   <properties>
@@ -53,8 +54,7 @@ stage(&apos;Pre-Deployment -- Configure Network on Jenkins Build Node&apos;){
 
 node(&apos;bme-jenkins-slave-n01&apos;){
     stage(&apos;test&apos;){
-        bme.setup_ssh_pub_key()
-        bme.install_tempest_tests(&quot;infra02&quot;)
+        bme.configure_tempest(&quot;infra02&quot;)
     }
 }
 </script>
