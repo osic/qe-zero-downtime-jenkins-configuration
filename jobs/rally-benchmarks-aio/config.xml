@@ -127,7 +127,6 @@ node(&apos;josh-aio-ansible-temp&apos;) {
     echo &apos;Fake upgrade finished.&apos;
 
 }
-*/
 // *******************************
 stage &apos;Post-Upgrade Validation&apos;
 // *******************************
@@ -147,7 +146,7 @@ node(&apos;josh-aio-ansible-temp&apos;) {
     //osa.run_persistent_resources_tests(&apos;verify&apos;, &apos;after_upgrade&apos;)
     //osa.run_persistent_resources_tests(&apos;cleanup&apos;)    
 
-}
+}*/
 // *******************************
 stage &apos;Reporting&apos;
 // *******************************
