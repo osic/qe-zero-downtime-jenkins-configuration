@@ -85,13 +85,13 @@ node(&apos;josh-aio-ansible-temp&apos;) {
     host_ip = common.get_server_ip()
 
     // Install latest version of Tempest in the host
-    //osa.configure_tempest()
+    osa.configure_tempest()
 
     //Install rally for benchmarks
-    //osa.install_rally()
+    osa.install_rally()
 
 }
-/*
+
 // *******************************
 stage &apos;Post-Deployment Validation&apos;
 // *******************************
@@ -139,7 +139,7 @@ node(&apos;josh-aio-ansible-temp&apos;) {
 
     // Run Rally Benchmarks
     osa.prime_rally_benchmarks()
-    osa.run_rally_benchmarks(&apos;before_upgrade&apos;)
+    osa.run_rally_benchmarks(&apos;after_upgrade&apos;)
 
 
     // Run the persistent resources validation then clean them up
@@ -172,7 +172,7 @@ node(&apos;elasticsearch&apos;){
     
     //Parse benchmarks
     osa.parse_benchmarks(&apos;before_upgrade&apos;)
-    //osa.parse_benchmarks(&apos;after_upgrade&apos;)
+    osa.parse_benchmarks(&apos;after_upgrade&apos;)
 }
 
 // *******************************
