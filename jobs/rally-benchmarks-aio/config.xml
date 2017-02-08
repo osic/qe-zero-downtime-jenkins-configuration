@@ -91,7 +91,6 @@ node(&apos;josh-aio-ansible-temp&apos;) {
     osa.install_rally()
 
 }
-
 // *******************************
 stage &apos;Post-Deployment Validation&apos;
 // *******************************
@@ -126,7 +125,7 @@ node(&apos;josh-aio-ansible-temp&apos;) {
     sleep time: 2, unit: &apos;MINUTES&apos;
     echo &apos;Fake upgrade finished.&apos;
 
-}*/
+}
 // *******************************
 stage &apos;Post-Upgrade Validation&apos;
 // *******************************
