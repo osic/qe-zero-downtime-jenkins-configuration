@@ -172,8 +172,8 @@ node(&apos;elasticsearch&apos;){
     osa.parse_results()
     
     //Parse benchmarks
-    osa.parse_benchmarks(&apos;before_upgrade&apos;)
-    //osa.parse_benchmarks(&apos;after_upgrade&apos;)
+    //osa.parse_benchmarks(&apos;before_upgrade&apos;)
+    osa.parse_benchmarks(&apos;after_upgrade&apos;)
 }
 
 // *******************************
