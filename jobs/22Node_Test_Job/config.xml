@@ -26,8 +26,8 @@ def start_during_upgrade_test(controller_name=&apos;controller01&apos;) {
             print \$TEMPEST_DIR
             cd \$TEMPEST_DIR
             cd rolling-upgrades-during-test
-            python call_test.py -d --output-file \$TEMPEST_DIR/output &amp;
-        &apos;&apos;&apos;
+            python call_test.py -d --output-file \$TEMPEST_DIR/output
+        &apos;&apos;&apos; &amp;
     &quot;&quot;&quot;
 }
 
