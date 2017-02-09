@@ -25,6 +25,7 @@ def start_during_upgrade_test(controller_name=&apos;controller01&apos;) {
             cd \$TEMPEST_DIR
             cd rolling-upgrades-during-test
             python call_test.py --daemon --output-file \$TEMPEST_DIR/output
+            mkdir washere.txt
         &apos;&apos;&apos; &amp;
     &quot;&quot;&quot;
 }
