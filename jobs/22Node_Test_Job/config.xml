@@ -31,6 +31,20 @@ def start_during_upgrade_test(controller_name=&apos;controller01&apos;) {
     &quot;&quot;&quot;
 }
 
+def get_deploy_node_ip() {
+    // Get the onmetal host IP address
+    if (fileExists(&apos;hosts&apos;)) {
+        String hosts = readFile(&quot;hosts&quot;)
+        String ip_match = /ansible_ssh_host=(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/
+        String ip = (hosts=~ip_match)[0][1]
+        return (ip)
+    } else {
+
+        return (null)
+    }
+}
+
+
 // *******************************
 stage(&apos;Pre-Deployment -- Load Libs&apos;){
 // *******************************
