@@ -164,7 +164,7 @@ node(&apos;elasticsearch&apos;){
     osa.install_parser()
     
     //Pull data from the system and places it on ES vm
-    osa.aggregate_results(host_ip = &apos;10.0.0.42&apos;)
+    osa.aggregate_results(&apos;10.0.0.42&apos;)
 
     //Push data to ES
     osa.parse_results()
