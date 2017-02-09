@@ -82,7 +82,7 @@ node(&apos;josh-aio-ansible-temp&apos;) {
     osa.cleanup_test_results()
 
     // Get the agent IP
-    host_ip = 10.0.0.142 //common.get_server_ip()
+    host_ip = &apos;10.0.0.142&apos; //common.get_server_ip()
     // Install latest version of Tempest in the host
     //osa.configure_tempest()
 
