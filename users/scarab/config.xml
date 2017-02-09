@@ -23,9 +23,7 @@
       </views>
     </hudson.model.MyViewsProperty>
     <hudson.model.PaneStatusProperties>
-      <collapsed>
-        <string>buildHistory</string>
-      </collapsed>
+      <collapsed/>
     </hudson.model.PaneStatusProperties>
     <hudson.search.UserSearchProperty>
       <insensitiveSearch>false</insensitiveSearch>
