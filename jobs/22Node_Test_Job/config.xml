@@ -13,7 +13,7 @@
 String workspace_dir
 String onmetal_ip, elasticsearch_ip, elasticsearch_pkey
 
-def start_during_upgrade_test(controller_name=&apos;controller01&apos;) {
+def start_during_upgrade_tests(controller_name=&apos;controller01&apos;) {
     String host_ip = get_deploy_node_ip()
     String container_ip = get_controller_utility_container_ip(controller_name)
     String tempest_dir = get_tempest_dir(controller_name)
@@ -123,7 +123,7 @@ stage(&apos;Pre-Deployment -- Configure Network on Jenkins Build Node&apos;){
 
 node(&apos;bme-jenkins-slave-n01&apos;){
     stage(&apos;test&apos;){
-        start_during_upgrade_test(&quot;infra01&quot;)
+        start_during_upgrade_tests(&quot;infra01&quot;)
     }
 }
 </script>
