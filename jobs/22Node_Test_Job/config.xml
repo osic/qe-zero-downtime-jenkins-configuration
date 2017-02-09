@@ -23,7 +23,7 @@ def start_during_upgrade_test(controller_name=&apos;controller01&apos;) {
         -o ProxyCommand=&apos;ssh -W %h:%p root@${host_ip}&apos; root@${container_ip} &apos;&apos;&apos;
             TEMPEST_DIR=${tempest_dir}
             #mkdir washere
-            print \$TEMPEST_DIR
+            #print \$TEMPEST_DIR
             cd \$TEMPEST_DIR
             cd rolling-upgrades-during-test
             python call_test.py --daemon --output-file \$TEMPEST_DIR/output
