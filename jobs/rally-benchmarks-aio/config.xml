@@ -83,14 +83,14 @@ node(&apos;josh-aio-ansible-temp&apos;) {
 
     // Get the agent IP
     host_ip = common.get_server_ip()
-
+    echo &quot;$host_ip&quot;
     // Install latest version of Tempest in the host
     //osa.configure_tempest()
 
     //Install rally for benchmarks
-    osa.install_rally()
+    //osa.install_rally()
 
-}
+}/*
 // *******************************
 stage &apos;Post-Deployment Validation&apos;
 // *******************************
@@ -186,7 +186,7 @@ node(&apos;josh-aio-ansible-temp&apos;) {
     // for reference.
     println &quot;The host ${host_ip} will be deleted by Jenkins in 5 minutes.&quot;
 
-}
+}*/
 
 </script>
     <sandbox>true</sandbox>
