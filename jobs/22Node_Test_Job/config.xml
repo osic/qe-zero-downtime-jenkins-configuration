@@ -44,6 +44,24 @@ def get_deploy_node_ip() {
     }
 }
 
+def get_controller_utility_container_ip(controller_name=&apos;controller01&apos;) {
+    // Rather than use all containers, find just one to operate tests
+    String host_ip = get_deploy_node_ip()
+    ip_output = sh returnStdout: true, script: &quot;&quot;&quot;
+        ssh -o StrictHostKeyChecking=no root@${host_ip} &apos;&apos;&apos;
+            set -x
+            cd /etc/openstack_deploy
+            CONTAINER=\$(cat openstack_inventory.json | jq \&quot;.utility.hosts\&quot; | grep \&quot;${controller_name}_utility\&quot;)
+            CONTAINER=\$(echo \$CONTAINER | sed s/\\\&quot;//g | sed s/\\ //g | sed s/,//g )
+            IP=\$(cat openstack_inventory.json | jq &quot;._meta.hostvars[\\\&quot;&quot;\$CONTAINER&quot;\\\&quot;].ansible_ssh_host&quot; -r)
+            echo &quot;IP=\${IP}&quot;
+        &apos;&apos;&apos;
+    &quot;&quot;&quot;
+    // quote in a comment to fix editor syntax highlighting &apos;
+    echo ip_output
+    String container_ip = ip_output.substring(ip_output.indexOf(&apos;=&apos;) +1).trim()
+    return (container_ip)
+}
 
 // *******************************
 stage(&apos;Pre-Deployment -- Load Libs&apos;){
