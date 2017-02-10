@@ -91,31 +91,32 @@ node(&apos;bme-jenkins-slave-n01&apos;){
 
 stage(&apos;Pre-Upgrade Configuration&apos;){
     node(&apos;bme-jenkins-slave-n01&apos;){
-        //bme.install_api_uptime_tests(controller_name, container_tempest_dir)
-        //bme.install_during_upgrade_tests(controller_name, container_tempest_dir)
-        //bme.install_persistent_resources_tests(controller_name, container_tempest_dir)
-        //bme.install_persistent_resources_tests_parse(controller_name, container_tempest_dir)
-        //bme.run_persistent_resources_tests(controller_name, &apos;create&apos;, null, container_tempest_dir)
+        bme.install_api_uptime_tests(controller_name, container_tempest_dir)
+        bme.install_during_upgrade_tests(controller_name, container_tempest_dir)
+        bme.install_persistent_resources_tests(controller_name, container_tempest_dir)
+        bme.install_persistent_resources_tests_parse(controller_name, container_tempest_dir)
+        bme.run_persistent_resources_tests(controller_name, &apos;create&apos;, null, container_tempest_dir)
     }
 }
 
 
 node(&apos;bme-jenkins-slave-n01&apos;){
     stage(&apos;Start Upgrade tests&apos;){
-        //bme.start_api_uptime_tests(controller_name, container_tempest_dir)
-        //bme.start_during_upgrade_test(controller_name, container_tempest_dir)
+        bme.start_api_uptime_tests(controller_name, container_tempest_dir)
+        bme.start_during_upgrade_test(controller_name, container_tempest_dir)
     }
     stage(&apos;Run Upgrade&apos;){
        //bme.bash_upgrade_openstack(to_release, 2, false)
+       sh &apos;sleep 600&apos;
     }
     stage(&apos;Stop Upgrade tests&apos;){
-        //bme.stop_api_uptime_tests(controller_name, container_tempest_dir)
-        //bme.stop_during_upgrade_test(controller_name, container_tempest_dir)
+        bme.stop_api_uptime_tests(controller_name, container_tempest_dir)
+        bme.stop_during_upgrade_test(controller_name, container_tempest_dir)
     }
     stage(&apos;Run persistent resources tests&apos;){
-        //bme.run_persistent_resources_tests(controller_name, &apos;verify&apos;, null, container_tempest_dir)
-        //bme.parse_persistent_resources_tests(controller_name, container_tempest_dir)
-        //bme.run_persistent_resources_tests(controller_name, &apos;clean&apos;, null, container_tempest_dir)
+        bme.run_persistent_resources_tests(controller_name, &apos;verify&apos;, null, container_tempest_dir)
+        bme.parse_persistent_resources_tests(controller_name, container_tempest_dir)
+        bme.run_persistent_resources_tests(controller_name, &apos;clean&apos;, null, container_tempest_dir)
     }
 }
 
