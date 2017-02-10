@@ -88,7 +88,7 @@ node(&apos;josh-aio-ansible-temp&apos;) {
     //osa.configure_tempest()
 
     //Install rally for benchmarks
-    osa.install_rally()
+    //osa.install_rally()
 
 }
 // *******************************
