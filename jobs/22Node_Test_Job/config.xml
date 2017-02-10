@@ -9,78 +9,17 @@
     </org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
   </properties>
   <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@2.23">
-    <script>def osa, common, bme
+    <script>#!/usr/bin/env groovy
+
+def osa, common, bme
 String workspace_dir
-String onmetal_ip, elasticsearch_ip, elasticsearch_pkey
+String container_tempest_dir, deploy_node_ip, controller_utility_container_ip, elasticsearch_ip, elasticsearch_pkey
 
-def start_during_upgrade_tests(controller_name=&apos;controller01&apos;) {
-    String host_ip = get_deploy_node_ip()
-    String container_ip = get_controller_utility_container_ip(controller_name)
-    String tempest_dir = get_tempest_dir(controller_name)
-    // Start during upgrade tests on the utility container on ${controller}
-    sh &quot;&quot;&quot;
-        ssh -o StrictHostKeyChecking=no\
-        -o ProxyCommand=&apos;ssh -W %h:%p root@${host_ip}&apos; root@${container_ip} &apos;&apos;&apos;
-            TEMPEST_DIR=${tempest_dir}
-            #mkdir washere
-            #print \$TEMPEST_DIR
-            cd \$TEMPEST_DIR
-            cd rolling-upgrades-during-test
-            python call_test.py --daemon --output-file \$TEMPEST_DIR/output
-        &apos;&apos;&apos; &amp;
-    &quot;&quot;&quot;
-}
-
-def get_deploy_node_ip() {
-    // Get the onmetal host IP address
-    if (fileExists(&apos;hosts&apos;)) {
-        String hosts = readFile(&quot;hosts&quot;)
-        String ip_match = /ansible_ssh_host=(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/
-        String ip = (hosts=~ip_match)[0][1]
-        return (ip)
-    } else {
-
-        return (null)
-    }
-}
-
-def get_controller_utility_container_ip(controller_name=&apos;controller01&apos;) {
-    // Rather than use all containers, find just one to operate tests
-    String host_ip = get_deploy_node_ip()
-    ip_output = sh returnStdout: true, script: &quot;&quot;&quot;
-        ssh -o StrictHostKeyChecking=no root@${host_ip} &apos;&apos;&apos;
-            set -x
-            cd /etc/openstack_deploy
-            CONTAINER=\$(cat openstack_inventory.json | jq \&quot;.utility.hosts\&quot; | grep \&quot;${controller_name}_utility\&quot;)
-            CONTAINER=\$(echo \$CONTAINER | sed s/\\\&quot;//g | sed s/\\ //g | sed s/,//g )
-            IP=\$(cat openstack_inventory.json | jq &quot;._meta.hostvars[\\\&quot;&quot;\$CONTAINER&quot;\\\&quot;].ansible_ssh_host&quot; -r)
-            echo &quot;IP=\${IP}&quot;
-        &apos;&apos;&apos;
-    &quot;&quot;&quot;
-    // quote in a comment to fix editor syntax highlighting &apos;
-    echo ip_output
-    String container_ip = ip_output.substring(ip_output.indexOf(&apos;=&apos;) +1).trim()
-    return (container_ip)
-}
-
-def get_tempest_dir(controller_name=&apos;controller01&apos;) {
-  String host_ip = get_deploy_node_ip()
-  String container_ip = get_controller_utility_container_ip(controller_name)
-  String tempest_dir = &quot;&quot;
-  try {
-      tempest_dir = sh returnStdout: true, script: &quot;&quot;&quot;
-          ssh -o StrictHostKeyChecking=no\
-          -o ProxyCommand=&apos;ssh -W %h:%p root@${host_ip}&apos; root@${container_ip} &apos;&apos;&apos;
-              TEMPEST_DIR=\$(find / -maxdepth 4 -type d -name &quot;tempest_untagged&quot;)
-              echo \$TEMPEST_DIR
-          &apos;&apos;&apos;
-      &quot;&quot;&quot;
-  } catch(err) {
-      echo &quot;Error in determining Tempest location&quot;
-      throw err
-  }
-  return (tempest_dir)
-}
+// Jenkins must provide these variables as parameters or the build
+// will fail:
+//  - to_release
+//  - rebuild_environment
+//  - controller_name (i.e. controller01) - determines location of utility container to run tests
 
 // *******************************
 stage(&apos;Pre-Deployment -- Load Libs&apos;){
@@ -114,16 +53,92 @@ stage(&apos;Pre-Deployment -- Configure Network on Jenkins Build Node&apos;){
                 echo &quot;[deploy_node]&quot; &gt; hosts
                 echo &quot;intelci-node ansible_ssh_host=172.24.0.21 ansible_ssh_user=root&quot; &gt;&gt; hosts
             &quot;&quot;&quot;
-
         }
+        deploy_node_ip = bme.get_deploy_node_ip()
+        controller_utility_container_ip = bme.get_controller_utility_container_ip(controller_name)
+    }
+}
+
+
+node(&apos;bme-jenkins-slave-n01&apos;){
+    // env prep
+    if (rebuild_environment == &quot;true&quot;){
+        stage(&apos;Rebuilding Environment and redeploying openstack&apos;){
+            bme.rebuild_environment()
+        }
+    } else {
+      stage(&apos;Skipping rebuild&apos;){
+        echo &apos;Skipping rebuild environment and redeploy OpenStack.&apos;
+      }
     }
 }
 
 
 
 node(&apos;bme-jenkins-slave-n01&apos;){
-    stage(&apos;test&apos;){
-        start_during_upgrade_tests(&quot;infra01&quot;)
+    stage(&apos;Install and Configure tempest&apos;){
+        //bme.setup_ssh_pub_key()
+        //bme.install_tempest_tests(controller_name)
+        //bme.configure_tempest(controller_name)
+        container_tempest_dir = &quot;/opt/tempest_untagged&quot;
+    }
+    stage(&apos;Run Tempest Smoke Tests&apos;) {
+        //bme.run_tempest_tests(controller_name, &apos;smoke&apos;, &apos;before_upgrade&apos;, elasticsearch_ip, container_tempest_dir)
+    }
+}
+
+stage(&apos;Pre-Upgrade Configuration&apos;){
+    node(&apos;bme-jenkins-slave-n01&apos;){
+        //bme.install_api_uptime_tests(controller_name, container_tempest_dir)
+        //bme.install_during_upgrade_tests(controller_name, container_tempest_dir)
+        //bme.install_persistent_resources_tests(controller_name, container_tempest_dir)
+        //bme.install_persistent_resources_tests_parse(controller_name, container_tempest_dir)
+        //bme.run_persistent_resources_tests(controller_name, &apos;create&apos;, null, container_tempest_dir)
+    }
+}
+
+
+node(&apos;bme-jenkins-slave-n01&apos;){
+    stage(&apos;Start Upgrade tests&apos;){
+        //bme.start_api_uptime_tests(controller_name, container_tempest_dir)
+        //bme.start_during_upgrade_test(controller_name, container_tempest_dir)
+    }
+    stage(&apos;Run Upgrade&apos;){
+       //bme.bash_upgrade_openstack(to_release, 2, false)
+    }
+    stage(&apos;Stop Upgrade tests&apos;){
+        //bme.stop_api_uptime_tests(controller_name, container_tempest_dir)
+        //bme.stop_during_upgrade_test(controller_name, container_tempest_dir)
+    }
+    stage(&apos;Run persistent resources tests&apos;){
+        //bme.run_persistent_resources_tests(controller_name, &apos;verify&apos;, null, container_tempest_dir)
+        //bme.parse_persistent_resources_tests(controller_name, container_tempest_dir)
+        //bme.run_persistent_resources_tests(controller_name, &apos;clean&apos;, null, container_tempest_dir)
+    }
+}
+
+stage(&apos;Post-Upgrade -- Validate Deploy&apos;){
+    node(&apos;bme-jenkins-slave-n01&apos;){
+        bme.install_tempest_tests(controller_name)
+        bme.run_tempest_tests(controller_name, &apos;smoke&apos;, &apos;after_upgrade&apos;, elasticsearch_ip)
+    }
+}
+
+stage(&apos;Post-Upgrade -- Reporting&apos;){
+    node(&apos;bme-jenkins-slave-n01&apos;){
+        bme.install_persistent_resources_tests_parse(controller_name, container_tempest_dir)
+        bme.parse_persistent_resources_tests(controller_name, container_tempest_dir)
+        bme.aggregate_results(deploy_node_ip, elasticsearch_ip, controller_utility_container_ip, container_tempest_dir)
+    }
+    node(&apos;elasticsearch&apos;){
+        osa.install_parser()
+        osa.parse_results()
+    }
+}
+
+stage(&apos;Complete - Disconnect from VPN&apos;){
+    node(&apos;bme-jenkins-slave-n01&apos;){
+        bme.disconnect_vpn()
     }
 }
 </script>
