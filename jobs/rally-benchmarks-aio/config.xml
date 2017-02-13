@@ -69,7 +69,7 @@ node(&apos;elasticsearch&apos;) {
 
 }
 
-node(&apos;josh-aio-ansible-temp&apos;) {
+node(&apos;scarab_ansible&apos;) {
     
     // Wait for cloud-init to finish
     common.wait_for_agent_setup()
@@ -96,7 +96,7 @@ stage &apos;Post-Deployment Validation&apos;
 // *******************************
 
 echo &apos;Running tests to validate the OpenStack deployment&apos;
-node(&apos;josh-aio-ansible-temp&apos;) {
+node(&apos;scarab_ansible&apos;) {
    
     // Run the smoke tests
     // osa.run_tempest_smoke_tests(&apos;before_upgrade&apos;, elasticsearch_ip, host_ip)
@@ -117,7 +117,7 @@ stage &apos;Upgrade&apos;
 // *******************************
 
 echo &quot;Upgrading OpenStack from ${from_release} to ${to_release}&quot;
-node(&apos;josh-aio-ansible-temp&apos;) {
+node(&apos;scarab_ansible&apos;) {
 
     // Install latest version of Tempest in the host
     //osa.rolling_upgrade(to_release)
@@ -131,7 +131,7 @@ stage &apos;Post-Upgrade Validation&apos;
 // *******************************
 
 echo &apos;Validating the OpenStack deployment after the upgrade&apos;
-node(&apos;josh-aio-ansible-temp&apos;) {
+node(&apos;scarab_ansible&apos;) {
  
     // Run the tempest tests
     //osa.run_tempest_smoke_tests(&apos;after_upgrade&apos;, elasticsearch_ip, host_ip)
@@ -151,7 +151,7 @@ stage &apos;Reporting&apos;
 // *******************************
 
 echo &apos;Parsing the test results and submitting them to ElasticSearch&apos;
-node(&apos;josh-aio-ansible-temp&apos;) {
+node(&apos;scarab_ansible&apos;) {
     
     // Pase persistent resource results
     //osa.setup_parse_persistent_resources()
@@ -179,7 +179,7 @@ stage &apos;Clean Up&apos;
 // *******************************
 
 echo &apos;Deleting the OpenStack host&apos;
-node(&apos;josh-aio-ansible-temp&apos;) {
+node(&apos;scarab_ansible&apos;) {
 
     // There is actually nothing to be done here since Jenkins will take
     // care of deleting the VM. This stage is left in the pipeline just
