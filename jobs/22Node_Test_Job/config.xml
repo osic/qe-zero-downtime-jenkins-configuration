@@ -83,7 +83,7 @@ node(&apos;bme-jenkins-slave-n01&apos;){
         //bme.setup_ssh_pub_key()
         //bme.install_tempest_tests(controller_name)
         //bme.configure_tempest(controller_name)
-        //container_tempest_dir = bme.get_tempest_dir(controller_name)
+        container_tempest_dir = bme.get_tempest_dir(controller_name)
     }
     stage(&apos;Run Tempest Smoke Tests&apos;) {
         bme.run_tempest_tests(controller_name, &apos;smoke&apos;, &apos;before_upgrade&apos;, elasticsearch_ip, &apos;/opt/tempest_untagged&apos;)
