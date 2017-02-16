@@ -15,7 +15,7 @@ def osa, common, bme
 String workspace_dir
 String container_tempest_dir, deploy_node_ip, controller_utility_container_ip, elasticsearch_ip, elasticsearch_pkey
 to_release = &quot;stable/newton&quot;
-rebuild_environment = &quot;false&quot;
+rebuild_environment = &quot;true&quot;
 controller_name = &quot;infra01&quot;
 
 // Jenkins must provide these variables as parameters or the build
