@@ -45,6 +45,12 @@ stage(&apos;Pre-Deployment -- Load Libs&apos;){
     }
 }
 
+node(&apos;elasticsearch&apos;){
+    stage(&quot;Clean up any previous test run results&quot;){
+      bme.cleanup_test_results()
+    }
+}
+
 stage(&apos;Pre-Deployment -- Configure Network on Jenkins Build Node&apos;){
     node(&apos;bme-jenkins-slave-n01&apos;) {
         withCredentials([[$class: &apos;UsernamePasswordMultiBinding&apos;, credentialsId: &apos;b4df0136-d403-4e1c-a62b-10d751505d77&apos;,
