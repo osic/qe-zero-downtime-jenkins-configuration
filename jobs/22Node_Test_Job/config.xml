@@ -67,7 +67,7 @@ node(&apos;bme-jenkins-slave-n01&apos;){
     // env prep
     if (rebuild_environment == &quot;true&quot;){
         stage(&apos;Rebuilding Environment and redeploying openstack&apos;){
-//            bme.rebuild_environment()
+            bme.rebuild_environment()
         }
     } else {
       stage(&apos;Skipping rebuild&apos;){
