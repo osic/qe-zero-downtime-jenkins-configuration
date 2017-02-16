@@ -62,7 +62,7 @@ node(&apos;master&apos;) {
     
 }
 
-node(&apos;elasticsearch&apos;) {
+node(&apos;scarab_elk&apos;) {
 
     // Get the server information
     elasticsearch_ip = common.get_server_ip()
@@ -158,8 +158,7 @@ node(&apos;scarab_ansible&apos;) {
     //osa.parse_persistent_resources_tests()
 
 }
-node(&apos;elasticsearch&apos;){
-    
+node(&apos;scarab_elk&apos;) {    
     // Installupgrade the parser in ElasticSearch 
     osa.install_parser()
     
