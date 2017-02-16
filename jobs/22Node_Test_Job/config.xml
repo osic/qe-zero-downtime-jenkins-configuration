@@ -17,6 +17,11 @@ String container_tempest_dir, deploy_node_ip, controller_utility_container_ip, e
 to_release = &quot;stable/newton&quot;
 rebuild_environment = &quot;false&quot;
 controller_name = &quot;infra01&quot;
+
+def osa, common, bme
+String workspace_dir
+String container_tempest_dir, deploy_node_ip, controller_utility_container_ip, elasticsearch_ip, elasticsearch_pkey
+
 // Jenkins must provide these variables as parameters or the build
 // will fail:
 //  - to_release
@@ -66,8 +71,7 @@ node(&apos;bme-jenkins-slave-n01&apos;){
     // env prep
     if (rebuild_environment == &quot;true&quot;){
         stage(&apos;Rebuilding Environment and redeploying openstack&apos;){
-            echo &quot;Nothing&quot;
-            //bme.rebuild_environment()
+            bme.rebuild_environment()
         }
     } else {
       stage(&apos;Skipping rebuild&apos;){
@@ -80,9 +84,9 @@ node(&apos;bme-jenkins-slave-n01&apos;){
 
 node(&apos;bme-jenkins-slave-n01&apos;){
     stage(&apos;Install and Configure tempest&apos;){
-        //bme.setup_ssh_pub_key()
-        //bme.install_tempest_tests(controller_name)
-        //bme.configure_tempest(controller_name)
+        bme.setup_ssh_pub_key()
+        bme.install_tempest_tests(controller_name)
+        bme.configure_tempest(controller_name, &apos;/opt/tempest_untagged&apos;)
         container_tempest_dir = bme.get_tempest_dir(controller_name)
     }
     stage(&apos;Run Tempest Smoke Tests&apos;) {
@@ -92,6 +96,8 @@ node(&apos;bme-jenkins-slave-n01&apos;){
 
 stage(&apos;Pre-Upgrade Configuration&apos;){
     node(&apos;bme-jenkins-slave-n01&apos;){
+        bme.clear_ssh_host_key(controller_name)
+        bme.transfer_tempest_configuration_to_controller(controller_name)
         bme.install_api_uptime_tests(controller_name, container_tempest_dir)
         bme.install_during_upgrade_tests(controller_name, container_tempest_dir)
         bme.install_persistent_resources_tests(controller_name, container_tempest_dir)
@@ -110,6 +116,7 @@ node(&apos;bme-jenkins-slave-n01&apos;){
 	      bme.bash_upgrade_openstack(to_release, 1, false)
     }
     stage(&apos;Stop Upgrade tests&apos;){
+        bme.clear_ssh_host_key(controller_name)
         bme.stop_api_uptime_tests(controller_name, container_tempest_dir)
         bme.stop_during_upgrade_test(controller_name, container_tempest_dir)
     }
@@ -119,17 +126,21 @@ stage(&apos;Post-Upgrade -- Validate Deploy&apos;){
     node(&apos;bme-jenkins-slave-n01&apos;){
         try {
           bme.install_tempest_tests(controller_name)
+          //pause just a bit after tests installed, before configuring
+          sh &quot;sleep 300&quot;
         } catch (err){
           echo &quot;Error in step&quot;
           echo err.message
         }
         try {
-            bme.configure_tempest(controller_name)
+            bme.configure_tempest(controller_name, &apos;/openstack/venvs/tempest-untagged&apos;)
         } catch (err){
+            sh &quot;sleep 300&quot;
             echo &quot;Error in step&quot;
             echo err.message
         }
         try {
+            sh &quot;sleep 300&quot;
             bme.run_tempest_tests(controller_name, &apos;smoke&apos;, &apos;after_upgrade&apos;, elasticsearch_ip, &apos;/openstack/venvs/tempest-untagged&apos;)
         } catch (err){
             echo &quot;Error in step&quot;
@@ -142,13 +153,19 @@ stage(&apos;Post-Upgrade -- Validate Deploy&apos;){
             echo err.message
         }
         try {
-            bme.parse_persistent_resources_tests(controller_name, &apos;/openstack/venvs/tempest-untagged&apos;)
+          bme.run_persistent_resources_tests(controller_name, &apos;clean&apos;, null, &apos;/openstack/venvs/tempest-untagged&apos;)
         } catch (err){
-            echo &quot;Error in step&quot;
-            echo err.message
+          echo &quot;Error in step&quot;
+          echo err.message
         }
         try {
-            bme.run_persistent_resources_tests(controller_name, &apos;clean&apos;, null, &apos;/openstack/venvs/tempest-untagged&apos;)
+          bme.install_persistent_resources_tests_parse(controller_name, &apos;/openstack/venvs/tempest-untagged&apos;)
+        } catch (err){
+          echo &quot;Error in step&quot;
+          echo err.message
+        }
+        try {
+            bme.parse_persistent_resources_tests(controller_name, &apos;/opt/tempest_untagged&apos;)
         } catch (err){
             echo &quot;Error in step&quot;
             echo err.message
@@ -156,23 +173,10 @@ stage(&apos;Post-Upgrade -- Validate Deploy&apos;){
     }
 }
 
-
 stage(&apos;Post-Upgrade -- Reporting&apos;){
     node(&apos;bme-jenkins-slave-n01&apos;){
       try {
-          bme.install_persistent_resources_tests_parse(controller_name, &apos;/openstack/venvs/tempest-untagged&apos;)
-      } catch (err){
-          echo &quot;Error in step&quot;
-          echo err.message
-      }
-      try {
-          bme.parse_persistent_resources_tests(controller_name, &apos;/openstack/venvs/tempest-untagged&apos;)
-      } catch (err){
-          echo &quot;Error in step&quot;
-          echo err.message
-      }
-      try {
-          bme.aggregate_results(deploy_node_ip, elasticsearch_ip, container_tempest_dir)
+          bme.aggregate_results(deploy_node_ip, elasticsearch_ip, container_tempest_dir, controller_name)
       } catch (err){
           echo &quot;Error in step&quot;
           echo err.message
