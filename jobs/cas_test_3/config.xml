@@ -17,6 +17,7 @@ echo &apos;This one also works here in groovy&apos;
 node(&apos;master&apos;){
     String eth0 = &apos;ip addr show eth0&apos;.execute().getText()
     String ip = eth0.split(&apos;inet &apos;)[0]
+    println &quot;${ip}&quot;
     //String ip = (eth0 =~ &quot;inet [\b]*&quot;)
 }
 
