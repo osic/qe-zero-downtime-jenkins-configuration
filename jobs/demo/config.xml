@@ -16,8 +16,9 @@ String ip = &quot;ip addr show eth0&quot;.execute().getText().split(&apos;inet &
 echo &quot;Im running in this ip: ${ip}&quot;
 
 node(&apos;demo&apos;){
-    ip = &quot;ip addr show eth0&quot;.execute().getText().split(&apos;inet &apos;)[1].split(&apos;/24 brd&apos;)[0]
-    echo &quot;Im running in this ip: ${ip}&quot;
+    String ip2 = &quot;ip addr show eth0&quot;.execute().getText().split(&apos;inet &apos;)[1].split(&apos;/24 brd&apos;)[0]
+    echo &quot;Im running in this ip: ${ip2}&quot;
+    sh &apos;rm -rf devstack-lxc&apos;
     git &apos;https://github.com/osic/devstack-lxc.git&apos;
 }</script>
     <sandbox>false</sandbox>
