@@ -1,5 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <flow-definition plugin="workflow-job@2.9">
+  <actions/>
   <description></description>
   <keepDependencies>false</keepDependencies>
   <properties>
@@ -12,7 +13,10 @@
 stage (&apos;Stage 1&apos;)
 
 println &quot;This is my first line&quot;
-echo &quot;By the way this works too&quot;</script>
+echo &quot;By the way this works too&quot;
+
+string eth0 = &quot;ip addr show eth0&quot;.execute().text()
+echo &quot;I&apos;m running from IP: ${eth0}&quot;</script>
     <sandbox>true</sandbox>
   </definition>
   <triggers/>
