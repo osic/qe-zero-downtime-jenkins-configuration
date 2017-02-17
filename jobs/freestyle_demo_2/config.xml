@@ -1,5 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <project>
+  <actions/>
   <description></description>
   <keepDependencies>false</keepDependencies>
   <properties/>
@@ -23,7 +24,7 @@
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>ip=$(ip add show eth0 | grep net\\b | awk &apos;{print $2}&apos;)
+      <command>ip=$(ip addr show eth0 | grep net\\b | awk &apos;{print $2}&apos;)
 echo &quot;Im running in this new IP: &quot; $ip
 rm -rf devstack-lxc
 git clone https://github.com/osic/devstack-lxc.git</command>
