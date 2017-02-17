@@ -1,5 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <project>
+  <actions/>
   <description></description>
   <keepDependencies>false</keepDependencies>
   <properties/>
@@ -12,7 +13,9 @@
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>echo &quot;Hi I&apos;m the first job&quot;</command>
+      <command>echo &quot;Hi I&apos;m the first job&quot;
+ip = $(ip addr show eth0 | grep &quot;inet\\b&quot; | awk &apos;{print $2}&apos;)
+echo &quot;I&apos;m running from IP: &quot; $ip </command>
     </hudson.tasks.Shell>
   </builders>
   <publishers/>
