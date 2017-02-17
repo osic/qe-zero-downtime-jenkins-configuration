@@ -15,7 +15,7 @@ println &quot;The pre-deplooyment stage is starting...&quot;
 echo &apos;This one also works here in groovy&apos;
 
 node(&apos;master&apos;){
-    println &quot;hostname&quot;.execute().text    
+    println InetAddress   
 }
 
 </script>
