@@ -26,9 +26,8 @@
     <hudson.tasks.Shell>
       <command>ip=$(ip addr show eth0 | grep inet\\b | awk &apos;{print $2}&apos;)
 echo &apos;Now running in ip: &apos; $ip
-if [-d devstack]; then
-	rm -rf devstack
-fi
+
+rm -rf devstack
 git clone https://github.com/openstack-dev/devstack.git</command>
     </hudson.tasks.Shell>
   </builders>
