@@ -15,7 +15,7 @@ stage (&apos;Stage 1&apos;)
 println &quot;This is my first line&quot;
 echo &quot;By the way this works too&quot;
 
-string eth0 = &quot;ip addr show eth0&quot;.execute().toString()
+string eth0 = &quot;ip addr show eth0&quot;.execute().getText()
 echo &quot;I&apos;m running from IP: ${eth0}&quot;</script>
     <sandbox>false</sandbox>
   </definition>
