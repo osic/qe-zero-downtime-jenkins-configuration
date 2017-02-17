@@ -15,7 +15,8 @@ println &quot;The pre-deplooyment stage is starting...&quot;
 echo &apos;This one also works here in groovy&apos;
 
 node(&apos;master&apos;){
-    println &apos;ip addr show eth0&apos;.execute().getText()
+    String eth0 = &apos;ip addr show eth0&apos;.execute().getText()
+    String ip = (eth0 =~ &quot;inet [\b]*&quot;)
 }
 
 </script>
