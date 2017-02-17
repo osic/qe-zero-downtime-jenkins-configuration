@@ -14,7 +14,7 @@
 println &quot;The pre-deplooyment stage is starting...&quot;
 echo &apos;This one also works here in groovy&apos;
 
-
+println &quot;ifconfig&quot;.execute().text
 </script>
     <sandbox>true</sandbox>
   </definition>
