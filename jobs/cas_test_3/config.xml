@@ -15,7 +15,7 @@ println &quot;The pre-deplooyment stage is starting...&quot;
 echo &apos;This one also works here in groovy&apos;
 
 node(&apos;master&apos;){
-    println InetAddress   
+    println &quot;ip route show dev eth0&quot;.execute().getText().tokenize()[9]
 }
 
 </script>
