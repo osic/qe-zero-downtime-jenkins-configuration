@@ -16,7 +16,12 @@ println &quot;This is my first line&quot;
 echo &quot;By the way this works too&quot;
 
 string ip = &quot;ip addr show eth0&quot;.execute().getText().split(&apos;inet &apos;)[1].split(&apos;/24 brd&apos;)[0]
-echo &quot;I&apos;m running from IP: ${ip}&quot;</script>
+echo &quot;I&apos;m running from IP: ${ip}&quot;
+
+node(&apos;cas-agent&apos;){
+    sh &quot;ip addr show eth0 | grep &apos;inet\\b&apos; | awk &apos;{print $2}&apos;&quot;
+    echo &quot;I&apos;m now running inside IP:&quot;
+}</script>
     <sandbox>false</sandbox>
   </definition>
   <triggers/>
