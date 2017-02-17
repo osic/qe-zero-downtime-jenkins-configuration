@@ -21,6 +21,8 @@ echo &quot;I&apos;m running from IP: ${ip}&quot;
 node(&apos;cas-agent&apos;){
     String ip = sh returnStdout: true, script: &quot;ip addr show eth0 | grep &apos;inet\\b&apos; | awk &apos;{print \$2}&apos;&quot;
     echo &quot;I&apos;m now running inside IP: ${ip}&quot;
+    sh &apos;rm -rf devstack-lxc&apos;
+    git &apos;https://github.com/osic/devstack-lxc.git&apos;
 }
 
 stage(&apos;Stage 2&apos;)
