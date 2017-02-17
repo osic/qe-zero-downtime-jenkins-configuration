@@ -1,5 +1,17 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <jenkins.plugins.ssh2easy.gssh.GsshBuilderWrapper_-GsshDescriptorImpl plugin="ssh2easy@1.4">
-  <serverGroups/>
-  <servers/>
+  <serverGroups>
+    <jenkins.plugins.ssh2easy.gssh.ServerGroup>
+      <groupName>test_group</groupName>
+      <port>22</port>
+      <username>ubuntu</username>
+      <password></password>
+    </jenkins.plugins.ssh2easy.gssh.ServerGroup>
+  </serverGroups>
+  <servers>
+    <jenkins.plugins.ssh2easy.gssh.Server>
+      <name></name>
+      <ip>10.0.0.143</ip>
+    </jenkins.plugins.ssh2easy.gssh.Server>
+  </servers>
 </jenkins.plugins.ssh2easy.gssh.GsshBuilderWrapper_-GsshDescriptorImpl>
