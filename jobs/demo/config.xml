@@ -1,5 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <flow-definition plugin="workflow-job@2.9">
+  <actions/>
   <description></description>
   <keepDependencies>false</keepDependencies>
   <properties>
@@ -13,7 +14,7 @@ println &quot;first comment&quot;
 echo &quot;Second comment&quot;
 String ip = &quot;ip addr show eth0&quot;.execute().getText().split(&apos;inet &apos;)[1].split(&apos;/24 brd&apos;)[0]
 echo &quot;Im running in this ip: ${ip}&quot;</script>
-    <sandbox>true</sandbox>
+    <sandbox>false</sandbox>
   </definition>
   <triggers/>
 </flow-definition>
