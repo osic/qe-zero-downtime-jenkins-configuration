@@ -15,7 +15,7 @@ println &quot;The pre-deplooyment stage is starting...&quot;
 echo &apos;This one also works here in groovy&apos;
 
 node(&apos;master&apos;){
-    println &quot;ip addr show eth0 | grep &apos;\\b&apos;&quot;.execute().getText()
+    println &apos;ip addr show eth0 | grep inet\\b&apos;.execute().getText()
 }
 
 </script>
