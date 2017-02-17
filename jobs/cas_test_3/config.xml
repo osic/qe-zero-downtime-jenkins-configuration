@@ -19,8 +19,8 @@ string ip = &quot;ip addr show eth0&quot;.execute().getText().split(&apos;inet &
 echo &quot;I&apos;m running from IP: ${ip}&quot;
 
 node(&apos;cas-agent&apos;){
-    sh &quot;ip addr show eth0 | grep &apos;inet\\b&apos; | awk &apos;{print \$2}&apos;&quot;
-    echo &quot;I&apos;m now running inside IP:&quot;
+    String ip = sh returnStdout: true, script: &quot;ip addr show eth0 | grep &apos;inet\\b&apos; | awk &apos;{print \$2}&apos;&quot;
+    echo &quot;I&apos;m now running inside IP: ${ip}&quot;
 }</script>
     <sandbox>false</sandbox>
   </definition>
