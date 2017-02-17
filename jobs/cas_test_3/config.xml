@@ -10,7 +10,7 @@
   </properties>
   <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@2.23">
     <script>
-stage (&apos;Stage 1&apos;)
+stage(&apos;Stage 1&apos;)
 
 println &quot;This is my first line&quot;
 echo &quot;By the way this works too&quot;
@@ -21,7 +21,12 @@ echo &quot;I&apos;m running from IP: ${ip}&quot;
 node(&apos;cas-agent&apos;){
     String ip = sh returnStdout: true, script: &quot;ip addr show eth0 | grep &apos;inet\\b&apos; | awk &apos;{print \$2}&apos;&quot;
     echo &quot;I&apos;m now running inside IP: ${ip}&quot;
-}</script>
+}
+
+stage(&apos;Stage 2&apos;)
+
+echo &quot;This is the second stage of the pipeline&quot;
+</script>
     <sandbox>false</sandbox>
   </definition>
   <triggers/>
