@@ -30,14 +30,6 @@ echo &apos;Now running in ip: &apos; $ip
 rm -rf devstack
 git clone https://github.com/openstack-dev/devstack.git</command>
     </hudson.tasks.Shell>
-    <jenkins.plugins.ssh2easy.gssh.GsshShellBuilder plugin="ssh2easy@1.4">
-      <disable>false</disable>
-      <serverInfo>null~~~~10.0.0.143</serverInfo>
-      <groupName>null</groupName>
-      <ip>10.0.0.143</ip>
-      <shell>ip=$(ip addr show eth0 | grep inet\\b | awk &apos;{print $2}&apos;)
-echo &apos;Now running in ip: &apos; $ip</shell>
-    </jenkins.plugins.ssh2easy.gssh.GsshShellBuilder>
   </builders>
   <publishers/>
   <buildWrappers/>
