@@ -1,5 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <project>
+  <actions/>
   <description></description>
   <keepDependencies>false</keepDependencies>
   <properties/>
@@ -24,7 +25,8 @@
   <builders>
     <hudson.tasks.Shell>
       <command>ip=$(ip addr show eth0 | grep inet\\b | awk &apos;{print $2}&apos;)
-echo &apos;Now running in ip: &apos; $ip</command>
+echo &apos;Now running in ip: &apos; $ip
+git clone https://github.com/openstack-dev/devstack.git</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers/>
