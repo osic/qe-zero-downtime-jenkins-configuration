@@ -18,7 +18,11 @@ String eth0 = &apos;ip addr show eth0&apos;.execute().getText()
 String ip = eth0.split(&apos;inet &apos;)[1].split(&apos; brd&apos;)[0]
 println &quot;I&apos;m running in this IP: ${ip}&quot;
 
-git &apos;https://github.com/osic/devstack-lxc.git&apos; </script>
+git &apos;https://github.com/osic/devstack-lxc.git&apos; 
+
+node(&apos;cas-agent&apos;){
+    String ip = null
+}</script>
     <sandbox>false</sandbox>
   </definition>
   <triggers/>
