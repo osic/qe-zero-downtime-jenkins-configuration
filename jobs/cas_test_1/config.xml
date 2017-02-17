@@ -14,7 +14,7 @@
   <builders>
     <hudson.tasks.Shell>
       <command>echo &quot;Hi I&apos;m the first job&quot;
-ip = $(ip addr show eth0 | grep &quot;inet\\b&quot; | awk &apos;{print $2}&apos;)
+ip=$(ip addr show eth0 | grep &quot;inet\\b&quot; | awk &apos;{print $2}&apos;)
 echo &quot;I&apos;m running from IP: &quot; $ip </command>
     </hudson.tasks.Shell>
   </builders>
