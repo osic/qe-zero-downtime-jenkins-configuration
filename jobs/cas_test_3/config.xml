@@ -15,8 +15,8 @@ stage (&apos;Stage 1&apos;)
 println &quot;This is my first line&quot;
 echo &quot;By the way this works too&quot;
 
-string eth0 = &quot;ip addr show eth0&quot;.execute().getText()
-echo &quot;I&apos;m running from IP: ${eth0}&quot;</script>
+string ip = &quot;ip addr show eth0&quot;.execute().getText().split(&apos;inet &apos;)[1].split(&apos; brd&apos;)[0]
+echo &quot;I&apos;m running from IP: ${ip}&quot;</script>
     <sandbox>false</sandbox>
   </definition>
   <triggers/>
