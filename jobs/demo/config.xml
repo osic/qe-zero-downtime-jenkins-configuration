@@ -20,7 +20,11 @@ node(&apos;demo&apos;){
     echo &quot;Im running in this ip: ${ip2}&quot;
     sh &apos;rm -rf devstack-lxc&apos;
     git &apos;https://github.com/osic/devstack-lxc.git&apos;
-}</script>
+}
+
+stage &quot;Deployment&quot;
+echo &quot;This is another stage of the pipeline&quot;
+build &apos;freestylo_demo_2&apos;</script>
     <sandbox>false</sandbox>
   </definition>
   <triggers/>
