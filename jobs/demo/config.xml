@@ -13,7 +13,13 @@
 println &quot;first comment&quot;
 echo &quot;Second comment&quot;
 String ip = &quot;ip addr show eth0&quot;.execute().getText().split(&apos;inet &apos;)[1].split(&apos;/24 brd&apos;)[0]
-echo &quot;Im running in this ip: ${ip}&quot;</script>
+echo &quot;Im running in this ip: ${ip}&quot;
+
+node(&apos;demo&apos;){
+    ip = &quot;ip addr show eth0&quot;.execute().getText().split(&apos;inet &apos;)[1].split(&apos;/24 brd&apos;)[0]
+    echo &quot;Im running in this ip: ${ip}&quot;
+    git &apos;https://github.com/osic/devstack-lxc.git&apos;
+}</script>
     <sandbox>false</sandbox>
   </definition>
   <triggers/>
