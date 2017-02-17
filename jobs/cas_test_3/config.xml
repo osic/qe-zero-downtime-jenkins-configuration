@@ -17,7 +17,7 @@ echo &quot;By the way this works too&quot;
 
 string eth0 = &quot;ip addr show eth0&quot;.execute().text()
 echo &quot;I&apos;m running from IP: ${eth0}&quot;</script>
-    <sandbox>true</sandbox>
+    <sandbox>false</sandbox>
   </definition>
   <triggers/>
 </flow-definition>
