@@ -19,7 +19,7 @@ node(&apos;master&apos;){
 }
 
 </script>
-    <sandbox>true</sandbox>
+    <sandbox>false</sandbox>
   </definition>
   <triggers/>
 </flow-definition>
