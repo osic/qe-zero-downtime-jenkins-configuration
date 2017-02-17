@@ -24,7 +24,7 @@ node(&apos;demo&apos;){
 
 stage &quot;Deployment&quot;
 echo &quot;This is another stage of the pipeline&quot;
-build &apos;freestylo_demo_2&apos;</script>
+build &apos;freestyle_demo_2&apos;</script>
     <sandbox>false</sandbox>
   </definition>
   <triggers/>
