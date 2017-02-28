@@ -18,12 +18,6 @@ to_release = &quot;stable/newton&quot;
 rebuild_environment = &quot;false&quot;
 controller_name = &quot;infra01&quot;
 
-// Jenkins must provide these variables as parameters or the build
-// will fail:
-//  - to_release
-//  - rebuild_environment
-//  - controller_name (i.e. controller01) - determines location of utility container to run tests
-
 // *******************************
 stage(&apos;Pre-Deployment -- Load Libs&apos;){
 // *******************************
@@ -45,12 +39,6 @@ stage(&apos;Pre-Deployment -- Load Libs&apos;){
     }
 }
 
-node(&apos;elasticsearch&apos;){
-    stage(&quot;Clean up any previous test run results&quot;){
-      bme.cleanup_test_results()
-    }
-}
-
 stage(&apos;Pre-Deployment -- Configure Network on Jenkins Build Node&apos;){
     node(&apos;bme-jenkins-slave-n01&apos;) {
         withCredentials([[$class: &apos;UsernamePasswordMultiBinding&apos;, credentialsId: &apos;b4df0136-d403-4e1c-a62b-10d751505d77&apos;,
@@ -65,6 +53,12 @@ stage(&apos;Pre-Deployment -- Configure Network on Jenkins Build Node&apos;){
         }
         deploy_node_ip = bme.get_deploy_node_ip()
         controller_utility_container_ip = bme.get_controller_utility_container_ip(controller_name)
+    }
+}
+
+node(&apos;elasticsearch&apos;){
+    stage(&quot;Clean up any previous test run results&quot;){
+      bme.cleanup_test_results()
     }
 }
 
@@ -98,13 +92,84 @@ node(&apos;bme-jenkins-slave-n01&apos;){
 
 stage(&apos;Pre-Upgrade Configuration&apos;){
     node(&apos;bme-jenkins-slave-n01&apos;){
+      try {    
         bme.clear_ssh_host_key(controller_name)
+      } catch (err){
+            sh &quot;sleep 300&quot;
+            echo &quot;Error in step clear_ssh_host_ke&quot;
+            echo err.message
+      }
+      try {
         bme.transfer_tempest_configuration_to_controller(controller_name)
-        bme.install_api_uptime_tests(controller_name, container_tempest_dir)
-        bme.install_during_upgrade_tests(controller_name, container_tempest_dir)
-        bme.install_persistent_resources_tests(controller_name, container_tempest_dir)
-        bme.install_persistent_resources_tests_parse(controller_name, container_tempest_dir)
-        bme.run_persistent_resources_tests(controller_name, &apos;create&apos;, null, container_tempest_dir)
+      } catch (err){
+            sh &quot;sleep 300&quot;
+            echo &quot;Error in step transfer_tempest_configuration_to_controller&quot;
+            echo err.message
+      }
+      try {
+	bme.install_api_uptime_tests(controller_name, container_tempest_dir)
+      } catch (err){
+            sh &quot;sleep 300&quot;
+            echo &quot;Error in step install_api_uptime_test&quot;
+            echo err.message
+      }
+      try {  
+	bme.install_during_upgrade_tests(controller_name, container_tempest_dir)
+      } catch (err){
+            sh &quot;sleep 300&quot;
+            echo &quot;Error in step install_during_upgrade_tests&quot;
+            echo err.message
+      }
+      try {  
+	bme.install_persistent_resources_tests(controller_name, container_tempest_dir)
+      } catch (err){
+            sh &quot;sleep 300&quot;
+            echo &quot;Error in step install_persistent_resources_tests&quot;
+            echo err.message
+      }
+      try {  
+	bme.install_persistent_resources_tests_parse(controller_name, container_tempest_dir)
+      } catch (err){
+            sh &quot;sleep 300&quot;
+            echo &quot;Error in step install_persistent_resources_tests_parse&quot;
+            echo err.message
+      }
+      try {
+	  bme.install_rally(controller_name, container_tempest_dir)
+      } catch (err){
+            sh &quot;sleep 300&quot;
+            echo &quot;Error in step install_rally&quot;
+            echo err.message
+      }
+      try {
+	  bme.prime_rally_benchmarks(controller_name, container_tempest_dir)
+      } catch (err){
+            sh &quot;sleep 300&quot;
+            echo &quot;Error in step prime_rally_benchmarks&quot;
+            echo err.message
+      }
+      try {
+	  bme.run_rally_benchmarks(controller_name, container_tempest_dir, &apos;before_upgrade&apos;)
+      } catch (err){
+            sh &quot;sleep 300&quot;
+            echo &quot;Error in step run_rally_benchmarks&quot;
+            echo err.message 
+      }
+      try {  
+	bme.run_persistent_resources_tests(controller_name, &apos;create&apos;, null, container_tempest_dir)
+      } catch (err){
+            sh &quot;sleep 300&quot;
+            echo &quot;Error in step run_persistent_resources_tests&quot;
+            echo err.message
+      }
+      try {  
+	bme.run_persistent_resources_tests(controller_name, &apos;verify&apos;, &apos;before_upgrade&apos;, container_tempest_dir)
+      } catch (err){
+            sh &quot;sleep 300&quot;
+            echo &quot;Error in step run_persistent_resources_tests&quot;
+            echo err.message
+      }
+
     }
 }
 
@@ -113,10 +178,11 @@ node(&apos;bme-jenkins-slave-n01&apos;){
     stage(&apos;Start Upgrade tests&apos;){
         bme.start_api_uptime_tests(controller_name, container_tempest_dir)
         bme.start_during_upgrade_test(controller_name, container_tempest_dir)
+	bme.start_nova_during_upgrade_test(controller_name, container_tempest_dir)
     }
     stage(&apos;Run Upgrade&apos;){
-//	      bme.bash_upgrade_openstack(to_release, 1, false)
-        sh &quot;sleep 300&quot;
+	      //bme.bash_upgrade_openstack(to_release, 1, false)
+	      sh &quot;sleep 3600&quot;
     }
     stage(&apos;Stop Upgrade tests&apos;){
         bme.clear_ssh_host_key(controller_name)
@@ -128,49 +194,61 @@ node(&apos;bme-jenkins-slave-n01&apos;){
 stage(&apos;Post-Upgrade -- Validate Deploy&apos;){
     node(&apos;bme-jenkins-slave-n01&apos;){
         try {
-//          bme.install_tempest_tests(controller_name)
+          //bme.install_tempest_tests(controller_name)
           //pause just a bit after tests installed, before configuring
-  //        sh &quot;sleep 300&quot;
+          sh &quot;sleep 300&quot;
         } catch (err){
-          echo &quot;Error in step&quot;
+          echo &quot;Error in step install_tempest_tests&quot;
           echo err.message
         }
         try {
-//            bme.configure_tempest(controller_name, &apos;/openstack/venvs/tempest-untagged&apos;)
+            bme.configure_tempest(controller_name, &apos;/opt/tempest-untagged&apos;)
         } catch (err){
             sh &quot;sleep 300&quot;
-            echo &quot;Error in step&quot;
+            echo &quot;Error in step configure_tempest&quot;
             echo err.message
         }
         try {
             sh &quot;sleep 300&quot;
-//            bme.run_tempest_tests(controller_name, &apos;smoke&apos;, &apos;after_upgrade&apos;, elasticsearch_ip, &apos;/openstack/venvs/tempest-untagged&apos;)
+            bme.run_tempest_tests(controller_name, &apos;smoke&apos;, &apos;after_upgrade&apos;, elasticsearch_ip, &apos;/opt/tempest-untagged&apos;)
         } catch (err){
-            echo &quot;Error in step&quot;
+            echo &quot;Error in step run_tempest_tests&quot;
             echo err.message
         }
         try {
-            bme.run_persistent_resources_tests(controller_name, &apos;verify&apos;, null, &apos;/openstack/venvs/tempest-untagged&apos;)
+            bme.run_persistent_resources_tests(controller_name, &apos;verify&apos;, &apos;after_upgrade&apos;, &apos;/opt/tempest-untagged&apos;)
         } catch (err){
-            echo &quot;Error in step&quot;
+            echo &quot;Error in step run_persistent_resources_test&quot;
             echo err.message
         }
         try {
-    //      bme.run_persistent_resources_tests(controller_name, &apos;clean&apos;, null, &apos;/openstack/venvs/tempest-untagged&apos;)
+          bme.run_persistent_resources_tests(controller_name, &apos;clean&apos;, null, &apos;/opt/tempest-untagged&apos;)
         } catch (err){
-          echo &quot;Error in step&quot;
+          echo &quot;Error in step run_persistent_resources_test&quot;
           echo err.message
         }
         try {
-          bme.install_persistent_resources_tests_parse(controller_name, &apos;/openstack/venvs/tempest-untagged&apos;)
+          bme.install_persistent_resources_tests_parse(controller_name, &apos;/opt/tempest-untagged&apos;)
         } catch (err){
-          echo &quot;Error in step&quot;
+          echo &quot;Error in step install_persistent_resources_tests_parse&quot;
+          echo err.message
+        }
+        try {
+          bme.prime_rally_benchmarks(controller_name, &apos;/opt/tempest-untagged&apos;)
+        } catch (err){
+          echo &quot;Error in step prime_rally_benchmarks&quot;
+          echo err.message
+        }
+        try {
+          bme.run_rally_benchmarks(controller_name, &apos;/opt/tempest-untagged&apos;, &apos;after_upgrade&apos;)
+        } catch (err){
+          echo &quot;Error in step run_rally_benchmarks&quot;
           echo err.message
         }
         try {
             bme.parse_persistent_resources_tests(controller_name, &apos;/opt/tempest_untagged&apos;)
         } catch (err){
-            echo &quot;Error in step&quot;
+            echo &quot;Error in step parse_persistent_resources_tests&quot;
             echo err.message
         }
     }
@@ -181,7 +259,7 @@ stage(&apos;Post-Upgrade -- Reporting&apos;){
       try {
           bme.aggregate_results(deploy_node_ip, elasticsearch_ip, container_tempest_dir, controller_name)
       } catch (err){
-          echo &quot;Error in step&quot;
+          echo &quot;Error in step aggregate_results&quot;
           echo err.message
       }
     }
@@ -189,13 +267,13 @@ stage(&apos;Post-Upgrade -- Reporting&apos;){
       try {
           osa.install_parser()
       } catch (err){
-          echo &quot;Error in step&quot;
+          echo &quot;Error in step install_parse&quot;
           echo err.message
       }
       try {
           osa.parse_results()
       } catch (err){
-          echo &quot;Error in step&quot;
+          echo &quot;Error in step parse_results&quot;
           echo err.message
       }
     }
