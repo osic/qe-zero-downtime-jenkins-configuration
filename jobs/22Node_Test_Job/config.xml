@@ -6,9 +6,16 @@
   <properties>
     <org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
       <triggers>
-        <hudson.triggers.TimerTrigger>
-          <spec>30 11 1 3 *</spec>
-        </hudson.triggers.TimerTrigger>
+        <jenkins.triggers.ReverseBuildTrigger>
+          <spec></spec>
+          <upstreamProjects>22Node_BME_Upgrade(danko)</upstreamProjects>
+          <threshold>
+            <name>UNSTABLE</name>
+            <ordinal>1</ordinal>
+            <color>YELLOW</color>
+            <completeBuild>true</completeBuild>
+          </threshold>
+        </jenkins.triggers.ReverseBuildTrigger>
       </triggers>
     </org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
   </properties>
