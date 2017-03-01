@@ -78,7 +78,7 @@ node(&apos;bme-jenkins-slave-n01&apos;){
     // env prep
     if (rebuild_environment == &quot;true&quot;){
         stage(&apos;Rebuilding Environment and redeploying openstack&apos;){
-            bme.rebuild_environment()
+            //bme.rebuild_environment()
         }
     } else {
       stage(&apos;Skipping rebuild&apos;){
@@ -193,7 +193,7 @@ node(&apos;bme-jenkins-slave-n01&apos;){
     }
     stage(&apos;Run Upgrade&apos;){
 	      //bme.bash_upgrade_openstack(to_release, 1, false)
-	      sh &quot;sleep 3600&quot;
+	      sh &quot;sleep 300&quot;
     }
     stage(&apos;Stop Upgrade tests&apos;){
         bme.clear_ssh_host_key(controller_name)
@@ -213,7 +213,7 @@ stage(&apos;Post-Upgrade -- Validate Deploy&apos;){
           echo err.message
         }
         try {
-            bme.configure_tempest(controller_name, &apos;/opt/tempest-untagged&apos;)
+            bme.configure_tempest(controller_name, &apos;/opt/tempest_untagged&apos;)
         } catch (err){
             sh &quot;sleep 300&quot;
             echo &quot;Error in step configure_tempest&quot;
@@ -221,37 +221,37 @@ stage(&apos;Post-Upgrade -- Validate Deploy&apos;){
         }
         try {
             sh &quot;sleep 300&quot;
-            bme.run_tempest_tests(controller_name, &apos;smoke&apos;, &apos;after_upgrade&apos;, elasticsearch_ip, &apos;/opt/tempest-untagged&apos;)
+            bme.run_tempest_tests(controller_name, &apos;smoke&apos;, &apos;after_upgrade&apos;, elasticsearch_ip, &apos;/opt/tempest_untagged&apos;)
         } catch (err){
             echo &quot;Error in step run_tempest_tests&quot;
             echo err.message
         }
         try {
-            bme.run_persistent_resources_tests(controller_name, &apos;verify&apos;, &apos;after_upgrade&apos;, &apos;/opt/tempest-untagged&apos;)
+            bme.run_persistent_resources_tests(controller_name, &apos;verify&apos;, &apos;after_upgrade&apos;, &apos;/opt/tempest_untagged&apos;)
         } catch (err){
             echo &quot;Error in step run_persistent_resources_test&quot;
             echo err.message
         }
         try {
-          bme.run_persistent_resources_tests(controller_name, &apos;clean&apos;, null, &apos;/opt/tempest-untagged&apos;)
+          bme.run_persistent_resources_tests(controller_name, &apos;clean&apos;, null, &apos;/opt/tempest_untagged&apos;)
         } catch (err){
           echo &quot;Error in step run_persistent_resources_test&quot;
           echo err.message
         }
         try {
-          bme.install_persistent_resources_tests_parse(controller_name, &apos;/opt/tempest-untagged&apos;)
+          bme.install_persistent_resources_tests_parse(controller_name, &apos;/opt/tempest_untagged&apos;)
         } catch (err){
           echo &quot;Error in step install_persistent_resources_tests_parse&quot;
           echo err.message
         }
         try {
-          bme.prime_rally_benchmarks(controller_name, &apos;/opt/tempest-untagged&apos;)
+          bme.prime_rally_benchmarks(controller_name, &apos;/opt/tempest_untagged&apos;)
         } catch (err){
           echo &quot;Error in step prime_rally_benchmarks&quot;
           echo err.message
         }
         try {
-          bme.run_rally_benchmarks(controller_name, &apos;/opt/tempest-untagged&apos;, &apos;after_upgrade&apos;)
+          bme.run_rally_benchmarks(controller_name, &apos;/opt/tempest_untagged&apos;, &apos;after_upgrade&apos;)
         } catch (err){
           echo &quot;Error in step run_rally_benchmarks&quot;
           echo err.message
