@@ -38,7 +38,7 @@ Should be left at default unless rerunning tests by installing/configuring tests
     <org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
       <triggers>
         <hudson.triggers.TimerTrigger>
-          <spec>1 7,15,23 * * *</spec>
+          <spec>1 6 * * *</spec>
         </hudson.triggers.TimerTrigger>
       </triggers>
     </org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
