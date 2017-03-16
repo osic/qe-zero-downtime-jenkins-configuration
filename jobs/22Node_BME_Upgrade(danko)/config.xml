@@ -19,7 +19,7 @@ Default parameters assume upgrade from stable/mitaka to stable/newton with full 
         <hudson.model.StringParameterDefinition>
           <name>to_release</name>
           <description>Version of Openstack to upgrade to</description>
-          <defaultValue>stable/newton</defaultValue>
+          <defaultValue>stable/ocata</defaultValue>
         </hudson.model.StringParameterDefinition>
         <hudson.model.BooleanParameterDefinition>
           <name>rebuild_environment</name>
