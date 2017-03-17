@@ -44,7 +44,7 @@ Should be left at default unless rerunning tests by installing/configuring tests
       <configVersion>2</configVersion>
       <userRemoteConfigs>
         <hudson.plugins.git.UserRemoteConfig>
-          <url>https://github.com/osic/qe-jenkins-baremetal</url>
+          <url>https://github.com/dankolbrs/qe-jenkins-baremetal</url>
         </hudson.plugins.git.UserRemoteConfig>
       </userRemoteConfigs>
       <branches>
