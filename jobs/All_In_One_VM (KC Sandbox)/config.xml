@@ -34,6 +34,15 @@ stage &apos;Post-Deployment Validation&apos;
 
 echo &apos;Running tests to validate the OpenStack deployment&apos;
 node(&apos;agent-xl&apos;) {
+    echo &apos;Waiting for cloud-init to finish setting up the VM...&apos;
+    timeout(10) {
+        waitUntil {
+            def cloud_init = readFile(&apos;/var/log/cloud-init-output.log&apos;)
+            def matcher = cloud_init =~ &apos;Cloud-init .* finished&apos;
+            matcher ? true : false
+        }
+        echo &apos;Cloud-init completed. VM Initialized.&apos;
+    }
 	sh &apos;&apos;&apos;
 		sudo usermod -U root
 		sudo chmod 0700 /root/.ssh
