@@ -51,7 +51,7 @@ node(&apos;agent-xl&apos;) {
 		sudo chmod 0600 /root/.ssh/authorized_keys
 	&apos;&apos;&apos;
 	sh &apos;&apos;&apos;
-	    ssh root@localhost &quot;&quot;&quot;
+	    ssh -o StrictHostKeyChecking=no root@localhost &quot;&quot;&quot;
 	        cd /opt/openstack-ansible
             git checkout stable/ocata
             git pull
