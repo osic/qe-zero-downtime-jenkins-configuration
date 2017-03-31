@@ -51,13 +51,12 @@ node(&apos;qe-ci-aio-1&apos;) {
 		 sudo chmod 0600 /root/.ssh/authorized_keys
 	&apos;&apos;&apos;
 	sh &apos;&apos;&apos;
-	     sudo su
 	     cd /opt/openstack-ansible
-         git checkout stable/ocata
-         git pull
-         scripts/bootstrap-ansible.sh
-         mv ansible-role-requirments.yml{,.bak} || echo &quot;file no exist&quot;
-         wget \\\&quot;https://gist.githubusercontent.com/dankolbrs/6224de079f4815838e6d2fb12943d083/raw/d9043e572613578a2c04ce9514c52a8a96b24802/ansible-role-requirements.yml\\\&quot;
+         sudo git checkout stable/ocata
+         sudo git pull
+         sudo scripts/bootstrap-ansible.sh
+         sudo mv ansible-role-requirments.yml{,.bak} || echo &quot;file no exist&quot;
+         sudo wget \\\&quot;https://gist.githubusercontent.com/dankolbrs/6224de079f4815838e6d2fb12943d083/raw/d9043e572613578a2c04ce9514c52a8a96b24802/ansible-role-requirements.yml\\\&quot;
          cat ansible-role-requirements.yml
          export TERM=xterm
          export I_REALLY_KNOW_WHAT_I_AM_DOING=true
