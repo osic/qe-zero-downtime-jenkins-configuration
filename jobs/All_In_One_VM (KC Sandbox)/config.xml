@@ -54,6 +54,7 @@ node(&apos;qe-ci-aio-1&apos;) {
 	&apos;&apos;&apos;
 	sh &apos;&apos;&apos;
 	    ssh -o StrictHostKeyChecking=no root@localhost &quot;&quot;&quot;
+	        sudo su
 	        cd /opt/openstack-ansible
             git checkout stable/ocata
             git pull
