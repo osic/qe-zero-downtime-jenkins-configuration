@@ -41,36 +41,20 @@ node(&apos;agent-xl&apos;) {
 		sudo chown root. /root/.ssh/authorized_keys
 		sudo chmod 0600 /root/.ssh/authorized_keys
 	&apos;&apos;&apos;
-	ssh -F $CONF root@devstack &quot;&quot;&quot;
-        cd /opt/openstack-ansible
-        git checkout stable/ocata
-        git pull
-        scripts/bootstrap-ansible.sh
-        mv ansible-role-requirments.yml{,.bak} || echo &quot;file no exist&quot;
-        wget \\\&quot;https://gist.githubusercontent.com/dankolbrs/6224de079f4815838e6d2fb12943d083/raw/d9043e572613578a2c04ce9514c52a8a96b24802/ansible-role-requirements.yml\\\&quot;
-        cat ansible-role-requirements.yml
-        export TERM=xterm
-        export I_REALLY_KNOW_WHAT_I_AM_DOING=true
-        echo &quot;YES&quot; | bash scripts/run-upgrade.sh
-	&quot;&quot;&quot;
 	sh &apos;&apos;&apos;
-	    ssh -F $CONF devstack &quot;&quot;&quot;
-			set -x
-			cd /opt/tempest
-		    sudo ostestr --regex smoke || echo &quot;Some tests failed&quot;
-			sudo mv /root/.pip{,.bak} || echo &quot;no .pip dir&quot;
-			sudo -H pip install --upgrade junitxml
-			sudo mv /root/.pip{.bak,} || echo &quot;no .pip dir&quot;
-			sudo rm -f /opt/tempest/tempest_junit_results.xml || echo &quot;File removed&quot;
-			sudo touch tempest_junit_results.xml
-			sudo chown ubuntu. tempest_junit_results.xml
-			sudo testr last --subunit | subunit2junitxml &gt;&gt; tempest_junit_results.xml || echo &quot;Returned: $?&quot;
-			&quot;&quot;&quot;
-		scp -F $CONF devstack:/opt/tempest/tempest_junit_results.xml .
-		&apos;&apos;&apos;
-	    step([$class: &apos;XUnitBuilder&apos;, 
-		    thresholds: [[$class: &apos;FailedThreshold&apos;, unstableThreshold: &apos;3&apos;]],
-			tools: [[$class: &apos;JUnitType&apos;, pattern: &apos;tempest_junit_results.xml&apos;]]])
+	    ssh root@localhost &quot;&quot;&quot;
+	        cd /opt/openstack-ansible
+            git checkout stable/ocata
+            git pull
+            scripts/bootstrap-ansible.sh
+            mv ansible-role-requirments.yml{,.bak} || echo &quot;file no exist&quot;
+            wget \\\&quot;https://gist.githubusercontent.com/dankolbrs/6224de079f4815838e6d2fb12943d083/raw/d9043e572613578a2c04ce9514c52a8a96b24802/ansible-role-requirements.yml\\\&quot;
+            cat ansible-role-requirements.yml
+            export TERM=xterm
+            export I_REALLY_KNOW_WHAT_I_AM_DOING=true
+            echo &quot;YES&quot; | bash scripts/run-upgrade.sh
+	    &quot;&quot;&quot;
+	&apos;&apos;&apos;
 }
 </script>
     <sandbox>true</sandbox>
