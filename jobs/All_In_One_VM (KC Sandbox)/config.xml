@@ -33,7 +33,7 @@ stage &apos;Post-Deployment Validation&apos;
 // *******************************
 
 echo &apos;Running tests to validate the OpenStack deployment&apos;
-node(&apos;agent-xl&apos;) {
+node(&apos;qe-ci-aio-1&apos;) {
     echo &apos;Waiting for cloud-init to finish setting up the VM...&apos;
     timeout(10) {
         waitUntil {
