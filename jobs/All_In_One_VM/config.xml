@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<flow-definition plugin="workflow-job@2.7">
+<flow-definition plugin="workflow-job@2.9">
   <actions/>
   <description></description>
   <keepDependencies>false</keepDependencies>
@@ -8,12 +8,12 @@
       <triggers/>
     </org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
   </properties>
-  <definition class="org.jenkinsci.plugins.workflow.cps.CpsScmFlowDefinition" plugin="workflow-cps@2.19">
-    <scm class="hudson.plugins.git.GitSCM" plugin="git@3.0.0">
+  <definition class="org.jenkinsci.plugins.workflow.cps.CpsScmFlowDefinition" plugin="workflow-cps@2.23">
+    <scm class="hudson.plugins.git.GitSCM" plugin="git@3.0.1">
       <configVersion>2</configVersion>
       <userRemoteConfigs>
         <hudson.plugins.git.UserRemoteConfig>
-          <url>https://github.com/CasJ/openstack_one_node_ci.git</url>
+          <url>https://github.com/castulo/openstack_one_node_ci.git</url>
         </hudson.plugins.git.UserRemoteConfig>
       </userRemoteConfigs>
       <branches>
