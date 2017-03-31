@@ -6,37 +6,74 @@
   <properties>
     <hudson.model.ParametersDefinitionProperty>
       <parameterDefinitions>
-        <hudson.model.StringParameterDefinition>
-          <name>release</name>
-          <description>// Jenkins must provide this variable as parameter or the build 
-// will fail:
-//  - release</description>
-          <defaultValue>master</defaultValue>
-        </hudson.model.StringParameterDefinition>
+        <hudson.model.BooleanParameterDefinition>
+          <name>REBUILD_SERVER</name>
+          <description>Rebuild server</description>
+          <defaultValue>false</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
+        <hudson.model.BooleanParameterDefinition>
+          <name>UPGRADE</name>
+          <description>Run upgrade to stable/ocata</description>
+          <defaultValue>false</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
+        <hudson.model.BooleanParameterDefinition>
+          <name>TEST_UPGRADE</name>
+          <description>run tempest smoke tests</description>
+          <defaultValue>false</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
     <org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
       <triggers/>
     </org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
   </properties>
-  <definition class="org.jenkinsci.plugins.workflow.cps.CpsScmFlowDefinition" plugin="workflow-cps@2.23">
-    <scm class="hudson.plugins.git.GitSCM" plugin="git@3.0.1">
-      <configVersion>2</configVersion>
-      <userRemoteConfigs>
-        <hudson.plugins.git.UserRemoteConfig>
-          <url>https://github.com/CasJ/openstack_one_node_ci.git</url>
-        </hudson.plugins.git.UserRemoteConfig>
-      </userRemoteConfigs>
-      <branches>
-        <hudson.plugins.git.BranchSpec>
-          <name>*/master</name>
-        </hudson.plugins.git.BranchSpec>
-      </branches>
-      <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
-      <submoduleCfg class="list"/>
-      <extensions/>
-    </scm>
-    <scriptPath>openstack_all_in_one.pipeline</scriptPath>
+  <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@2.23">
+    <script>// *******************************
+stage &apos;Post-Deployment Validation&apos;
+// *******************************
+
+echo &apos;Running tests to validate the OpenStack deployment&apos;
+node(&apos;agent-xl&apos;) {
+	sh &apos;&apos;&apos;
+		sudo usermod -U root
+		sudo chmod 0700 /root/.ssh
+		sudo cp /home/ubuntu/.ssh/authorized_keys /root/.ssh/authorized_keys
+		sudo chown root. /root/.ssh/authorized_keys
+		sudo chmod 0600 /root/.ssh/authorized_keys
+	&apos;&apos;&apos;
+	ssh -F $CONF root@devstack &quot;&quot;&quot;
+        cd /opt/openstack-ansible
+        git checkout stable/ocata
+        git pull
+        scripts/bootstrap-ansible.sh
+        mv ansible-role-requirments.yml{,.bak} || echo &quot;file no exist&quot;
+        wget \\\&quot;https://gist.githubusercontent.com/dankolbrs/6224de079f4815838e6d2fb12943d083/raw/d9043e572613578a2c04ce9514c52a8a96b24802/ansible-role-requirements.yml\\\&quot;
+        cat ansible-role-requirements.yml
+        export TERM=xterm
+        export I_REALLY_KNOW_WHAT_I_AM_DOING=true
+        echo &quot;YES&quot; | bash scripts/run-upgrade.sh
+	&quot;&quot;&quot;
+	sh &apos;&apos;&apos;
+	    ssh -F $CONF devstack &quot;&quot;&quot;
+			set -x
+			cd /opt/tempest
+		    sudo ostestr --regex smoke || echo &quot;Some tests failed&quot;
+			sudo mv /root/.pip{,.bak} || echo &quot;no .pip dir&quot;
+			sudo -H pip install --upgrade junitxml
+			sudo mv /root/.pip{.bak,} || echo &quot;no .pip dir&quot;
+			sudo rm -f /opt/tempest/tempest_junit_results.xml || echo &quot;File removed&quot;
+			sudo touch tempest_junit_results.xml
+			sudo chown ubuntu. tempest_junit_results.xml
+			sudo testr last --subunit | subunit2junitxml &gt;&gt; tempest_junit_results.xml || echo &quot;Returned: $?&quot;
+			&quot;&quot;&quot;
+		scp -F $CONF devstack:/opt/tempest/tempest_junit_results.xml .
+		&apos;&apos;&apos;
+	    step([$class: &apos;XUnitBuilder&apos;, 
+		    thresholds: [[$class: &apos;FailedThreshold&apos;, unstableThreshold: &apos;3&apos;]],
+			tools: [[$class: &apos;JUnitType&apos;, pattern: &apos;tempest_junit_results.xml&apos;]]])
+}
+</script>
+    <sandbox>true</sandbox>
   </definition>
   <triggers/>
 </flow-definition>
