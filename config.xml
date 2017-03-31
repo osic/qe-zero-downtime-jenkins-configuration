@@ -71,6 +71,19 @@
               <retentionTime>-1</retentionTime>
             </slaveOptions>
           </jenkins.plugins.openstack.compute.JCloudsSlaveTemplate>
+          <jenkins.plugins.openstack.compute.JCloudsSlaveTemplate>
+            <name>qe-ci-aio-1</name>
+            <labelString>qe-ci-aio-1</labelString>
+            <slaveOptions>
+              <imageId>danko-osa-newton</imageId>
+              <hardwareId>8</hardwareId>
+              <instanceCap>2</instanceCap>
+            </slaveOptions>
+          </jenkins.plugins.openstack.compute.JCloudsSlaveTemplate>
+          <jenkins.plugins.openstack.compute.JCloudsSlaveTemplate>
+            <labelString></labelString>
+            <slaveOptions/>
+          </jenkins.plugins.openstack.compute.JCloudsSlaveTemplate>
         </c>
         <list reference="../c"/>
       </templates>
