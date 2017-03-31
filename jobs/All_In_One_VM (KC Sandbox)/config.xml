@@ -44,13 +44,13 @@ node(&apos;qe-ci-aio-1&apos;) {
         echo &apos;Cloud-init completed. VM Initialized.&apos;
     }
 	sh &apos;&apos;&apos;
-//		ssh -o StrictHostKeyChecking=no root@localhost &quot;&quot;&quot;
+
 		    sudo usermod -U root
 		    sudo chmod 0700 /root/.ssh
 		    sudo cp /home/ubuntu/.ssh/authorized_keys /root/.ssh/authorized_keys
 		    sudo chown root. /root/.ssh/authorized_keys
 		    sudo chmod 0600 /root/.ssh/authorized_keys
-//	    &quot;&quot;&quot;
+
 	&apos;&apos;&apos;
 	sh &apos;&apos;&apos;
 	    ssh -o StrictHostKeyChecking=no root@localhost &quot;&quot;&quot;
