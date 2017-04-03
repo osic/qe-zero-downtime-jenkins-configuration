@@ -78,6 +78,7 @@
               <imageId>danko-osa-newton</imageId>
               <hardwareId>8</hardwareId>
               <instanceCap>2</instanceCap>
+              <retentionTime>180</retentionTime>
             </slaveOptions>
           </jenkins.plugins.openstack.compute.JCloudsSlaveTemplate>
           <jenkins.plugins.openstack.compute.JCloudsSlaveTemplate>
