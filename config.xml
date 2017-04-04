@@ -75,7 +75,7 @@
             <name>qe-ci-aio-1</name>
             <labelString>qe-ci-aio-1</labelString>
             <slaveOptions>
-              <imageId>kc-qe-aio</imageId>
+              <imageId>danko-osa-newton</imageId>
               <hardwareId>8</hardwareId>
               <instanceCap>2</instanceCap>
               <retentionTime>180</retentionTime>
