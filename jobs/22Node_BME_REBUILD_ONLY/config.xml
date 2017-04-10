@@ -1,8 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <flow-definition plugin="workflow-job@2.9">
   <actions/>
-  <description>************** EDITED TO POINT TO DANKOLBRS REPO FOR DEBUG - 4/07/17  ****************************************&#xd;
-Used to start to finish (assuming no errors) install OpenStack Ansible, run tests, upgrade via OSA upgrade script to ${to_release}, run tests, parse and report results.&#xd;
+  <description>Rebuilds 22Node environment, runs tests, does not upgrade&#xd;
 &#xd;
 Default parameters assume upgrade from stable/mitaka to stable/newton with full rebuild and redeploy of all nodes in environment.</description>
   <keepDependencies>false</keepDependencies>
@@ -49,19 +48,19 @@ Should be left at default unless rerunning tests by installing/configuring tests
       <configVersion>2</configVersion>
       <userRemoteConfigs>
         <hudson.plugins.git.UserRemoteConfig>
-          <url>https://github.com/dankolbrs/qe-jenkins-baremetal</url>
+          <url>https://github.com/osic/qe-jenkins-baremetal</url>
         </hudson.plugins.git.UserRemoteConfig>
       </userRemoteConfigs>
       <branches>
         <hudson.plugins.git.BranchSpec>
-          <name>*/strip_upgrade</name>
+          <name>*/master</name>
         </hudson.plugins.git.BranchSpec>
       </branches>
       <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
       <submoduleCfg class="list"/>
       <extensions/>
     </scm>
-    <scriptPath>jenkins/bme_upgrade.pipeline</scriptPath>
+    <scriptPath>jenkins/bme_rebuild.pipeline</scriptPath>
   </definition>
   <triggers/>
 </flow-definition>
